@@ -1,6 +1,7 @@
 #ifndef MM_ARGUMENTS_HPP
 #define MM_ARGUMENTS_HPP
 
+#include <algorithm>
 #include <functional>
 #include <sstream>
 #include <stdexcept>
@@ -123,97 +124,73 @@ private:
 	T data;
 };
 
-/*
-namespace MM {
-
+template <std::size_t N>
 class Stencil {
 public:
-	template<typename ...Offsets>
-	Stencil(Offsets ...offsets) : offsets({offsets...}) {}
-		
-	bool contains_offset(const Offset& offset) const {
-		return offsets.count(offset) > 0;
+	Stencil(std::vector<Offsets<N>> p_offsets)
+		: offsets(p_offsets)
+	{
+	}
+
+	bool contains_offset(const Offsets<N>& offset) const {
+		auto it = std::find(offsets.begin(), offsets.end(), offset);
+		return it != offsets.end();
 	}
 	
 private:
-	std::unordered_set<Offset> offsets;
+	std::vector<Offsets<N>> offsets;
 };
 
-template <typename T>
+template<typename T, std::size_t N, typename dtype>
 class NeighProxy {
 public:
-	NeighProxy(const CELL_ID p_cell, const MAT_ID p_mat,
-		   T p_data, const Stencil p_stencil)
-		: cell(p_cell), mat(p_mat),
+	NeighProxy(const Coords<N> p_cell_coords, const std::size_t p_mat_index,
+		   T p_data, const Stencil<N> p_stencil)
+		: cell_coords(p_cell_coords), mat_index(p_mat_index),
 		  data(p_data), stencil(p_stencil)
-		{}
+	{
+	}
 
-	double get_neigh(int x, int y) {
-		const Offset offset(x, y);
+	dtype get_neigh(const Offsets<N>& offset) const {
 		if (!stencil.contains_offset(offset)) {
-			throw "No offset.";
+			throw "No such offset in stencil.";
 		}
 		
-		const std::size_t cell_index = cell.id;
-
-		const std::size_t COLS = data.get_data_structure().get_n_of_columns();
-		const std::size_t ROWS = data.get_data_structure().get_n_of_rows();
-		
-		const std::size_t cell_col = cell_index % COLS;
-		const std::size_t cell_row = cell_index / COLS;
-
-		const std::size_t new_x = cell_col + x;
-		const std::size_t new_y = cell_row + y;
-
-		// Bounds checking.
-		if (new_x >= COLS) {
-			std::stringstream s;
-			s << "The column index is out of bounds. "
-			  << "Provided index: "  << new_x
-			  << ", valid range: [0 - " << COLS << ").";
-			throw std::out_of_range(s.str());
-		}
-
-		if (new_y >= ROWS) {
-			std::stringstream s;
-			s << "The row index is out of bounds. "
-			  << "Provided index: "  << new_y
-			  << ", valid range: [0 - " << ROWS << ").";
-			throw std::out_of_range(s.str());
-		}
-
-		// TODO: check stencil.
-		
-		const std::size_t new_index = new_y * COLS + new_x;
-		const CELL_ID new_id {new_index};
-		return unified_data_get(data, new_id, mat);
+		const Coords<N> neighbour_coords = cell_coords + offset;
+		return unified_data_get(data, neighbour_coords, mat_index);
 	}
 	
 private:
-	const CELL_ID cell;
-	const MAT_ID mat;
+	const Coords<N> cell_coords;
+	const std::size_t mat_index;
 
 	T data;
-	const Stencil stencil;
+	const Stencil<N> stencil;	
 };
 
-template <typename T>
+template<typename T, std::size_t N, typename dtype>
 class NEIGH {
 public:
-	NEIGH(T p_data, const Stencil stencil)
-		: data(p_data)
-		{}
+	NEIGH(T p_data, const Stencil<N> p_stencil)
+		: data(p_data), stencil(p_stencil)
+	{
+		static_assert(std::is_same<T, CellData<N, dtype>>::value
+			      || std::is_same<T, MatData<dtype>>::value
+			      || std::is_same<T, CellMatData<N, dtype>>::value);
+	}
 
-	NeighProxy<T> get(const CELL_ID& cell_id, const MAT_ID& mat_id) {
-		return NeighProxy<T>(cell_id, mat_id, data, stencil);
+	NeighProxy<T, N, dtype> get(const Coords<N>& cell_index,
+				    const std::size_t mat_index) {
+		return NeighProxy<T, N, dtype>(cell_index,
+					       mat_index,
+					       data,
+					       stencil);
 	}
 
 private:
-	const Stencil stencil;
+	const Stencil<N> stencil;
 	T data;
 };
-
-*/
 
 } // namespace MM
 
