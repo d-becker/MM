@@ -33,7 +33,7 @@ void index_generator() {
 
 	IndexGenerator<3> generator(begin, end);
 
-	while (!generator.is_over()) {
+	while (generator.has_next()) {
 		std::array<std::size_t, 3> array = generator.next();
 		print_array(array);
 	}

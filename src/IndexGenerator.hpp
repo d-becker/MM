@@ -14,11 +14,11 @@ public:
 		: begin(p_begin),
 		  end(p_end),
 		  current(p_begin),
-		  over(false)
+		  _has_next(true)
 	{
 		for (std::size_t i = 0; i < N; ++i) {
 			if (begin[i] >= end[i]) {
-				over = true;
+				_has_next = false;
 				break;
 			}
 		}
@@ -32,8 +32,8 @@ public:
 		return end;
 	}
 
-	bool is_over() const {
-		return over;
+	bool has_next() const {
+		return _has_next;
 	}
 	
 	std::array<std::size_t, N> next() {
@@ -44,7 +44,7 @@ public:
 
 			if (current[i] >= end[i]) {
 				if (i == N - 1) {
-					over = true;
+					_has_next = false;
 					break;
 				}
 				
@@ -62,7 +62,7 @@ private:
 	const std::array<std::size_t, N> end; // Exclusive.
 
 	std::array<std::size_t, N> current;
-	bool over;
+	bool _has_next;
 };
 
 } // namespace MM
