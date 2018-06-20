@@ -1,5 +1,5 @@
 SET(SRC_FILES
-        FullMatrixData.cpp
+        IndexGenerator.cpp
    )
 
 add_executable(MM main.cpp)

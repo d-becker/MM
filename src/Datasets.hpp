@@ -12,17 +12,35 @@
 namespace MM {
 
 template<std::size_t N, typename dtype = double>
-class CellData : private MultidimArray<N, dtype> {
+class CellData {
 public:
-	CellData(const std::array<std::size_t, N> p_size,
-		 std::vector<dtype>& p_buffer)
-		: MultidimArray<N, dtype>(p_size, p_buffer)
+	CellData(MultidimArray<N, dtype>& p_buffer)
+		: buffer(p_buffer)
 	{
 	}
 
-	using MultidimArray<N, dtype>::get_size;
-	using MultidimArray<N, dtype>::at;
-	using MultidimArray<N, dtype>::operator[];
+	const std::array<std::size_t, N>& get_size() const {
+		return buffer.get_size();
+	}
+	
+	const dtype& operator[](const Coords<N>& index) const {
+		return buffer[index];
+	}
+
+	dtype& operator[](const Coords<N>& index) {
+		return buffer[index];
+	}
+
+	const dtype& at(const Coords<N>& index) const {
+		return buffer.at(index);
+	}
+
+	dtype& at(const Coords<N>& index) {
+		return buffer.at(index);
+	}
+	
+private:
+	MultidimArray<N, dtype>& buffer;
 };
 
 template<typename dtype = double>
@@ -56,12 +74,37 @@ private:
 template<std::size_t N, typename dtype = double>
 class CellMatData {
 public:
-	CellMatData(std::vector<MultidimArray<N, dtype>> p_data)
+	CellMatData(std::vector<MultidimArray<N, dtype>>& p_data)
 		: data(p_data)
-		{
-		}
+	{
+	}
+
+	const std::array<std::size_t, N>& get_size() const {
+		return data.at(0).get_size();
+	}
+
+	const dtype& get_unchecked(const Coords<N> cell_index,
+				   const std::size_t mat_index) const {
+		return data[mat_index][cell_index];
+	}
+
+	dtype& get_unchecked(const Coords<N> cell_index,
+			     const std::size_t mat_index) {
+		return data[mat_index][cell_index];
+	}
+
+	const dtype& at(const Coords<N> cell_index,
+			const std::size_t mat_index) const {
+		return data.at(mat_index).at(cell_index);
+	}
+
+	dtype& at(const Coords<N> cell_index,
+		  const std::size_t mat_index) {
+		return data.at(mat_index).at(cell_index);
+	}
+	
 private:
-	std::vector<MultidimArray<N, dtype>> data;
+	std::vector<MultidimArray<N, dtype>>& data;
 	
 };
 

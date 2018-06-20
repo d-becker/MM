@@ -12,10 +12,9 @@ namespace MM {
 template <std::size_t N, typename dtype>
 class MultidimArray {
 public:
-	MultidimArray(const std::array<std::size_t, N> p_size,
-		      std::vector<dtype>& p_buffer)
+	MultidimArray(const std::array<std::size_t, N> p_size)
 		: size(p_size),
-		  buffer(p_buffer)
+		  buffer(calculate_buffer_length(p_size), 0.0)
 	{
 	}
 
@@ -59,7 +58,17 @@ public:
 	}
 	
 private:
+	static std::size_t
+	calculate_buffer_length(const std::array<std::size_t, N> size) {
+		std::size_t res = 1;
 
+		for (const std::size_t d : size) {
+			res *= d;
+		}
+
+		return res;
+	}
+	
 	
 	bool bounds_check(const Coords<N>& coords) const {
 		for (std::size_t i = 0; i < N; ++i) {
@@ -72,7 +81,7 @@ private:
 	}
 	
 	const std::array<std::size_t, N> size;
-	std::vector<dtype>& buffer;
+	std::vector<dtype> buffer;
 };
 
 } // namespace MM

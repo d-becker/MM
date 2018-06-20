@@ -13,15 +13,15 @@ class Coords {
 public:
 	Coords(std::array<std::size_t, N> p_coordinates)
 		: coordinates(p_coordinates)
-		{
-		}
+	{
+	}
 
 	template <typename ...Coordinates>
 	Coords(Coordinates... coords)
 		: coordinates({coords...})
-		{
-			static_assert(sizeof...(coords) == N);
-		}
+	{
+		static_assert(sizeof...(coords) == N);
+	}
 
 	std::size_t operator[](const std::size_t n) const {
 		return coordinates[n];

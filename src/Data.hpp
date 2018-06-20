@@ -4,10 +4,12 @@
 #include <array>
 #include <cstddef>
 #include <list>
+#include <sstream>
 #include <vector>
 
 #include "Coords.hpp"
 #include "Datasets.hpp"
+#include "DimensionError.hpp"
 
 namespace MM {
 
@@ -19,6 +21,19 @@ public:
 		: size(p_size),
 		  mat_number(p_mat_number)
 	{
+		if (p_mat_number == 0) {
+			throw DimensionError(
+				"The number of materials cannot be zero.");
+		}
+
+		for (const std::size_t d : p_size) {
+			if (d == 1) {
+				throw DimensionError(
+					"The size cannot contain ones.");
+			}
+		}
+
+		throw_on_zero_size(p_size);
 	}
 	
 	const std::array<std::size_t, N>& get_size() const {
@@ -26,9 +41,14 @@ public:
 	}
 
 	CellData<N, dtype> new_cell_data() {
-		const std::size_t buffer_length = calculate_buffer_length();
-		cell_buffers.emplace_back(buffer_length, 0.0);
-		return CellData<N, dtype>(size, cell_buffers.back());
+	        return new_cell_data(size);
+	}
+
+	CellData<N, dtype>
+	new_cell_data(const std::array<std::size_t, N>& arr_size) {
+		throw_on_zero_size(arr_size);
+		cell_buffers.emplace_back(arr_size);
+		return CellData<N, dtype>(cell_buffers.back());
 	}
 
 	MatData<dtype> new_mat_data() {
@@ -37,26 +57,35 @@ public:
 	}
 
 	CellMatData<N, dtype> new_cell_mat_data() {
+		return new_cell_mat_data(size);
+	}
+	
+	CellMatData<N, dtype>
+	new_cell_mat_data(const std::array<std::size_t, N>& arr_size) {
+		throw_on_zero_size(arr_size);
+		cell_mat_buffers.emplace_back(
+			mat_number,
+			MultidimArray<N, dtype>(arr_size));
 		
+		return CellMatData<N, dtype>(cell_mat_buffers.back());
 	}
 	
 private:
-	std::size_t calculate_buffer_length() {
-		std::size_t res = 1;
-
+	static void throw_on_zero_size(const std::array<std::size_t, N> size) {
 		for (const std::size_t d : size) {
-			res *= d;
+			if (d == 0) {
+				throw DimensionError(
+					"The size cannot contain zeros.");
+			}
 		}
-
-		return res;
 	}
 	
 	const std::array<std::size_t, N> size;
 	const std::size_t mat_number;
 	
-	std::list<std::vector<dtype>> cell_buffers;
+	std::list<MultidimArray<N, dtype>> cell_buffers;
 	std::list<std::vector<dtype>> mat_buffers;
-	std::list<std::vector<std::vector<dtype>> cell_mat_buffers;
+	std::list<std::vector<MultidimArray<N, dtype>>> cell_mat_buffers;
 };
 
 } // namespace MM
