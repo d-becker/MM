@@ -46,7 +46,7 @@ double& unified_data_get(CellMatData<N, dtype> data,
 	return data.at(cell_index, mat_index);
 }
 
-template<typename T, std::size_t N, typename dtype>
+template<typename T, std::size_t N, typename dtype = double>
 class IN {
 public:
 	IN(T p_data) : data(p_data)
@@ -64,7 +64,7 @@ private:
 	T data;
 };
 
-template<typename T, std::size_t N, typename dtype>
+template<typename T, std::size_t N, typename dtype = double>
 class OUT {
 public:
         OUT(T p_data) : data(p_data)
@@ -101,7 +101,7 @@ private:
 	std::function<double(double, double)>& reducer;
 };
 
-template<typename T, std::size_t N, typename dtype>
+template<typename T, std::size_t N, typename dtype = double>
 class REDUCE {
 public:	
 	REDUCE(std::function<double(double, double)> p_reducer, T p_data)
@@ -168,7 +168,7 @@ private:
 	const Stencil<N> stencil;	
 };
 
-template<typename T, std::size_t N, typename dtype>
+template<typename T, std::size_t N, typename dtype = double>
 class NEIGH {
 public:
 	NEIGH(T p_data, const Stencil<N> p_stencil)

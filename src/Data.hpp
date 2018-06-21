@@ -40,6 +40,10 @@ public:
 		return size;
 	}
 
+	std::size_t get_mat_number() const {
+		return mat_number;
+	}
+
 	CellData<N, dtype> new_cell_data() {
 	        return new_cell_data(size);
 	}

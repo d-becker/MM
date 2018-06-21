@@ -72,7 +72,7 @@ private:
 	
 	bool bounds_check(const Coords<N>& coords) const {
 		for (std::size_t i = 0; i < N; ++i) {
-			if (coords[i] >= size()[i]) {
+			if (coords[i] >= size[i]) {
 				return false;
 			}
 		}
