@@ -11,9 +11,12 @@
 
 namespace MM {
 
-template<std::size_t N, typename dtype = double>
+template<std::size_t _N, typename _dtype = double>
 class CellData {
 public:
+	constexpr static std::size_t N = _N;
+	using dtype = _dtype;
+	
 	CellData(MultidimArray<N, dtype>& p_buffer)
 		: buffer(p_buffer)
 	{
@@ -43,9 +46,11 @@ private:
 	MultidimArray<N, dtype>& buffer;
 };
 
-template<typename dtype = double>
+template<typename _dtype = double>
 class MatData {
 public:
+	using dtype = _dtype;
+	
 	MatData(std::vector<dtype>& p_material_data)
 	        : material_data(p_material_data)
 	{
@@ -71,9 +76,12 @@ private:
 	std::vector<dtype>& material_data;
 };
 
-template<std::size_t N, typename dtype = double>
+template<std::size_t _N, typename _dtype = double>
 class CellMatData {
 public:
+	constexpr static std::size_t N = _N;
+	using dtype = _dtype;
+	
 	CellMatData(std::vector<MultidimArray<N, dtype>>& p_data)
 		: data(p_data)
 	{

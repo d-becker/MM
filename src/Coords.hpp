@@ -38,6 +38,10 @@ public:
         dtype& at(const std::size_t n) {
 		return coordinates.at(n);
 	}
+
+	bool operator==(const VecN<dtype, N>& other) const {
+		return this->coordinates == other.coordinates;
+	}
 private:
 	std::array<dtype, N> coordinates;
 };

@@ -144,9 +144,9 @@ void test1() {
 	Computation<2> computation(data, index_generator);
 	
         computation.compute(kernel,
-		       IN<CellMatData<2>, 2>(density),
-		       IN<CellMatData<2>, 2>(volume),
-		       OUT<CellMatData<2>, 2>(mass));
+			    IN<CellMatData<2>>(density),
+			    IN<CellMatData<2>>(volume),
+			    OUT<CellMatData<2>>(mass));
 
 	bool ok = check_mass(mass);
 	cout << "Mass ok: " << ok << "." << endl;
@@ -190,24 +190,54 @@ void test2() {
 	
 	auto kernel = [] (double density,
 			  double volume,
-			  ReduceProxy mass_by_cell) {
+			  ReduceProxy<double> mass_by_cell) {
 		mass_by_cell << density * volume;
 	};
 	
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
 	computation.compute(kernel,
-			    IN<CellMatData<2>, 2>(density),
-			    IN<CellMatData<2>, 2>(volume),
-			    REDUCE<CellData<2>, 2>(sum, mass_by_cell));
+			    IN<CellMatData<2>>(density),
+			    IN<CellMatData<2>>(volume),
+			    REDUCE<CellData<2>>(sum, mass_by_cell));
 
 	bool ok = check_mass_by_cell(mass_by_cell);
 	cout << "Mass by cell ok: " << ok << "." << endl;
+}
+
+void test3() {
+	const std::size_t COLS = 128;
+	const std::size_t ROWS = 128;
+	const std::size_t MAT_N = 1;
+
+	Data<2> data({COLS, ROWS}, MAT_N);
+
+	CellData<2> x = data.new_cell_data();
+	CellData<2> y = data.new_cell_data();
+
+	Stencil<2> s9pt({{1,1},  {1,0},  {1,-1},
+			 {0,1},  {0,0},  {0,-1},
+			 {-1,1}, {-1,0}, {-1,-1}});
+
+        // Fill the datasets with data.
+	
+	IndexGenerator<2> index_generator({1, 1}, {127, 127});
+	Computation<2> computation(data, index_generator);
+	
+	computation.compute([] (NeighProxy<CellData<2>> x,
+				double& y) {
+				    y = -x[{1,1}]  - x[{1,0}]   - x[{1,-1}]
+					-x[{0,1}]  + 8*x[{0,0}] - x[{0,-1}]
+					-x[{-1,1}] - x[{-1,0}]  -x[{-1,-1}];
+			    },
+			    NEIGH<CellData<2>>(x, s9pt),
+			    OUT<CellData<2>>(y));
 }
 
 int main() {
 	// index_generator();
 	test1();
 	test2();
+	test3();
 	return 0;
 }
