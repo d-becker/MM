@@ -215,6 +215,17 @@ private:
 	const Stencil<T::N> stencil;
 };
 
+template <std::size_t N>
+class INDEX {
+public:
+	INDEX() {};
+
+	Coords<N>
+	get(const Coords<N>& cell_index, const std::size_t mat_index) {
+		return cell_index;
+	}
+};
+
 } // namespace MM
 
 #endif // MM_ARGUMENTS_HPP

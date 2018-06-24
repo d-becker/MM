@@ -234,10 +234,33 @@ void test3() {
 			    OUT<CellData<2>>(y));
 }
 
+void test4_index() {
+	const std::size_t COLS = 2;
+	const std::size_t ROWS = 2;
+	const std::size_t MAT_N = 1;
+
+	Data<2> data({COLS, ROWS}, MAT_N);
+
+	CellData<2> y = data.new_cell_data();
+
+        // Fill the datasets with data.
+	
+	IndexGenerator<2> index_generator({0, 0}, {2, 2});
+	Computation<2> computation(data, index_generator);
+	
+	computation.compute([] (Coords<2> index,
+				double& y) {
+				    cout << index[0] << ", " << index[1] << endl;
+			    },
+			    INDEX<2>(),
+			    OUT<CellData<2>>(y));
+}
+
 int main() {
 	// index_generator();
 	test1();
 	test2();
 	test3();
+	test4_index();
 	return 0;
 }
