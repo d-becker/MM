@@ -256,11 +256,43 @@ void test4_index() {
 			    OUT<CellData<2>>(y));
 }
 
+void test5_free_data() {
+	const std::size_t COLS = 200;
+	const std::size_t ROWS = 200;
+	const std::size_t MAT_N = 50;
+
+	Data<2> data({COLS, ROWS}, MAT_N);
+
+	CellData<2> y = data.new_cell_data();
+
+	const double constant = 9.8;
+	const std::vector<double> coefficients = {1, 2, 3};
+
+        // Fill the datasets with data.
+	
+	IndexGenerator<2> index_generator({0, 0}, {COLS, ROWS});
+	Computation<2> computation(data, index_generator);
+	
+	computation.compute([] (const double& constant,
+				const std::vector<double>& coefficients,
+				Coords<2> index,
+				double& y) {
+				    const std::size_t x_index = index.at(0);
+				    const double coefficient_index = x_index % 3;
+				    y = constant * coefficients[coefficient_index];
+			    },
+			    FREE_SCALAR<double>(constant),
+			    FREE_ARRAY<double>(coefficients),
+			    INDEX<2>(),
+			    OUT<CellData<2>>(y));
+}
+
 int main() {
 	// index_generator();
 	test1();
 	test2();
 	test3();
 	test4_index();
+	test5_free_data();
 	return 0;
 }

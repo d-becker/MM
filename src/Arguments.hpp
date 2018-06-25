@@ -49,18 +49,19 @@ dtype& unified_data_get(CellMatData<N, dtype> data,
 template<typename T>
 class IN {
 public:
+	using dtype = typename T::dtype;
+	
 	IN(T p_data) : data(p_data)
 	{
 		constexpr std::size_t N = T::N;
-		using dtype = typename T::dtype;
 		
 		static_assert(std::is_same<T, CellData<N, dtype>>::value
 			      || std::is_same<T, MatData<dtype>>::value
 			      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 	
-	const typename T::dtype& get(const Coords<T::N>& cell_index,
-				     const std::size_t mat_index) {
+	const dtype& get(const Coords<T::N>& cell_index,
+			 const std::size_t mat_index) {
 		return unified_data_get(data, cell_index, mat_index);
 	}
 	
@@ -224,6 +225,44 @@ public:
 	get(const Coords<N>& cell_index, const std::size_t mat_index) {
 		return cell_index;
 	}
+};
+
+
+template<typename dtype = double>
+class FREE_SCALAR {
+public:
+	FREE_SCALAR(const dtype p_value)
+		: value(p_value)
+	{
+	}
+
+	template<std::size_t N>
+	const dtype& get(const Coords<N>& cell_index,
+			 const std::size_t mat_index) const {
+		return value;
+	}
+private:
+	const dtype value;
+};
+
+template<typename dtype = double>
+class FREE_ARRAY {
+public:
+	using array_type = std::vector<dtype>;
+	
+	FREE_ARRAY(const array_type& p_values)
+		: values(p_values)
+	{
+	}
+
+	template<std::size_t N>
+	const array_type& get(const Coords<N>& cell_index,
+			      const std::size_t mat_index) const {
+		return values;
+	}
+	
+private:
+	const array_type& values;
 };
 
 } // namespace MM
