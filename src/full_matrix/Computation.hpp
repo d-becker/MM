@@ -6,6 +6,8 @@
 
 namespace MM {
 
+namespace full_matrix {
+
 template <std::size_t N, typename dtype = double>
 class Computation {
 public:
@@ -35,6 +37,8 @@ private:
 	Data<N, dtype>& data;
 	IndexGenerator<N> index_generator;
 };
+
+} // namespace full_matrix
 
 } // namespace MM
 

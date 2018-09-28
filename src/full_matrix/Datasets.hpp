@@ -11,6 +11,8 @@
 
 namespace MM {
 
+namespace full_matrix {
+
 template<std::size_t _N, typename _dtype = double>
 class CellData {
 public:
@@ -115,6 +117,8 @@ private:
 	std::vector<MultidimArray<N, dtype>>& data;
 	
 };
+
+} // namespace full_matrix
 
 } // namespace MM
 

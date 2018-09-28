@@ -6,6 +6,8 @@
 
 namespace MM {
 
+namespace full_matrix {
+
 template<std::size_t N>
 class IndexGenerator {
 public:
@@ -64,6 +66,8 @@ private:
 	std::array<std::size_t, N> current;
 	bool _has_next;
 };
+
+} // namespace full_matrix
 
 } // namespace MM
 

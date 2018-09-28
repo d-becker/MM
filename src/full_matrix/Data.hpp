@@ -13,6 +13,8 @@
 
 namespace MM {
 
+namespace full_matrix {
+
 template <std::size_t N, typename dtype = double>
 class Data {
 public:
@@ -91,6 +93,8 @@ private:
 	std::list<std::vector<dtype>> mat_buffers;
 	std::list<std::vector<MultidimArray<N, dtype>>> cell_mat_buffers;
 };
+
+} // namespace full_matrix
 
 } // namespace MM
 

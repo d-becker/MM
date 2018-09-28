@@ -7,8 +7,11 @@
 #include "Datasets.hpp"
 #include "IndexGenerator.hpp"
 
+#include "CompressedDataStructure.hpp"
+
 using namespace std;
 using namespace MM;
+using namespace MM::full_matrix;
 
 void print_2D(const CellData<2, double>& dataset) {
 	for (std::size_t i = 0; i < dataset.get_size().at(0); ++i) {
@@ -257,34 +260,32 @@ void test4_index() {
 }
 
 void test5_free_data() {
-	const std::size_t COLS = 200;
-	const std::size_t ROWS = 200;
+	const std::size_t COLS = 128;
 	const std::size_t MAT_N = 50;
 
-	Data<2> data({COLS, ROWS}, MAT_N);
+	Data<1> data({COLS}, MAT_N);
 
-	CellData<2> y = data.new_cell_data();
+	const double dt = 1e-2;
 
-	const double constant = 9.8;
-	const std::vector<double> coefficients = {1, 2, 3};
-
-        // Fill the datasets with data.
+	CellData<1> input = data.new_cell_data();
+	CellData<1> output = data.new_cell_data();
 	
-	IndexGenerator<2> index_generator({0, 0}, {COLS, ROWS});
-	Computation<2> computation(data, index_generator);
+	Stencil<1> neighs({{-1}, {0}, {1}});
+
+        // Fill the dataset with data.
 	
-	computation.compute([] (const double& constant,
-				const std::vector<double>& coefficients,
-				Coords<2> index,
-				double& y) {
-				    const std::size_t x_index = index.at(0);
-				    const double coefficient_index = x_index % 3;
-				    y = constant * coefficients[coefficient_index];
-			    },
-			    FREE_SCALAR<double>(constant),
-			    FREE_ARRAY<double>(coefficients),
-			    INDEX<2>(),
-			    OUT<CellData<2>>(y));
+	IndexGenerator<1> index_generator({1}, {COLS - 1});
+	Computation<1> computation(data, index_generator);
+	
+	computation.compute([] (
+		const double& dt,
+		const NeighProxy<CellData<1>> input,
+		double& output) {
+		    output = dt * (-input[{-1}] + 2*input[{0}] - input[{1}]);
+	        },
+	        FREE_SCALAR<>(dt),
+                NEIGH<CellData<1>>(input, neighs),
+	        OUT<CellData<1>>(output));
 }
 
 int main() {

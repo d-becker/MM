@@ -13,6 +13,8 @@
 
 namespace MM {
 
+namespace full_matrix {
+
 template<std::size_t N>
 void fit_index_to_reduced_data(Coords<N>& index,
 			       std::array<std::size_t, N> size) {
@@ -264,6 +266,8 @@ public:
 private:
 	const array_type& values;
 };
+
+} // namespace full_matrix
 
 } // namespace MM
 

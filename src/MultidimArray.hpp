@@ -56,6 +56,14 @@ public:
 		const dtype& const_result = const_this.at(coords);
 		return const_cast<dtype&>(const_result);
 	}
+
+	const dtype& at_raw_index(std::size_t index) const {
+		return buffer.at(index);
+	}
+
+	dtype& at_raw_index(std::size_t index) {
+		return buffer.at(index);
+	}
 	
 private:
 	static std::size_t
