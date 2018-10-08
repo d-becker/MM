@@ -8,8 +8,9 @@
 #include <vector>
 
 #include "Coords.hpp"
-#include "Datasets.hpp"
 #include "DimensionError.hpp"
+
+#include "full_matrix/Datasets.hpp"
 
 namespace MM {
 

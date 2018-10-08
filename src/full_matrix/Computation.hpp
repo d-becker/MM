@@ -1,8 +1,8 @@
 #ifndef MM_COMPUTATION_HPP
 #define MM_COMPUTATION_HPP
 
-#include "Data.hpp"
-#include "IndexGenerator.hpp"
+#include "full_matrix/Data.hpp"
+#include "full_matrix/IndexGenerator.hpp"
 
 namespace MM {
 

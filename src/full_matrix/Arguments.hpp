@@ -9,7 +9,7 @@
 #include <unordered_set>
 
 #include "Coords.hpp"
-#include "Datasets.hpp"
+#include "full_matrix/Datasets.hpp"
 
 namespace MM {
 

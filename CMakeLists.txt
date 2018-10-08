@@ -11,3 +11,5 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++14 -g -Wall")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 
 add_subdirectory(src)
+add_subdirectory(test)
+add_subdirectory(googletest)

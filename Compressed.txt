@@ -1,0 +1,16 @@
+Először létrehozni a vázat - meg kell adni minden cellához, hogy milyen anyagok vannak benne.
+
+Minden dimenzióhoz külön váz kell
+    - Egyelőre nem redukálunk csak egy térbeli dimenzió mentén.
+
+Akarunk-e frac2cell-t?
+    - Igen, vsz. inkább a kilapított indexszel, az indexkezelést, szomszédosságot máshol kezeljük, különösen, hogy lesz unstructured is.
+
+A Datasetek is külön osztályok, az argumentumok is.
+    - Iterátort kell visszaadniuk az anyagokra, mondjuk cellánként egyet.
+
+A Computation mindenképpen külön, mert az anyagokon nincs random access.
+
+Külön névtérbe tenni a különböző implementációkat, lehet usingolni vagy define-olni a névteret.
+
+Koordinátál: lehet, hogy intuitívabb, ha nem külön init list, és a GPU-n könnyebb, ha nem std objektum.
