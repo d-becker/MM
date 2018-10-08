@@ -34,7 +34,7 @@ dtype& unified_data_get(CellData<N, dtype> data,
 }
 
 template<std::size_t N, typename dtype>
-dtype& unified_data_get(MatData<dtype> data,
+dtype& unified_data_get(MatData<N, dtype> data,
 			const Coords<N>& cell_index,
 			const std::size_t mat_index) {
 	return data.at(mat_index);
@@ -58,7 +58,7 @@ public:
 		constexpr std::size_t N = T::N;
 		
 		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<dtype>>::value
+			      || std::is_same<T, MatData<N, dtype>>::value
 			      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 	
@@ -80,7 +80,7 @@ public:
 		using dtype = typename T::dtype;
 		
 		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<dtype>>::value
+			      || std::is_same<T, MatData<N, dtype>>::value
 			      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 	
@@ -124,7 +124,7 @@ public:
 		constexpr std::size_t N = T::N;
 		
 		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<dtype>>::value
+			      || std::is_same<T, MatData<N, dtype>>::value
 			      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 
@@ -201,7 +201,7 @@ public:
 		constexpr std::size_t N = T::N;
 		
 		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<dtype>>::value
+			      || std::is_same<T, MatData<N, dtype>>::value
 			      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 
