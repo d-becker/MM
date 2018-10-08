@@ -51,6 +51,7 @@ private:
 template<typename _dtype = double>
 class MatData {
 public:
+	constexpr static std::size_t N = 0;
 	using dtype = _dtype;
 	
 	MatData(std::vector<dtype>& p_material_data)
