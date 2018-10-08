@@ -57,9 +57,9 @@ public:
 		return CellData<N, dtype>(cell_buffers.back());
 	}
 
-	MatData<dtype> new_mat_data() {
+	MatData<N, dtype> new_mat_data() {
 		mat_buffers.emplace_back(mat_number, 0.0);
-		return MatData<dtype>(mat_buffers.back());
+		return MatData<N, dtype>(mat_buffers.back());
 	}
 
 	CellMatData<N, dtype> new_cell_mat_data() {

@@ -19,7 +19,7 @@ using namespace MM::full_matrix;
 void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, Data<2> &data,
 	CellMatData<2>& rho, CellMatData<2>& rho_mat_ave, CellMatData<2>& p, CellMatData<2>& Vf, CellMatData<2>& t,
 	CellData<2>& V, CellData<2>& x, CellData<2>& y,
-	MatData<>& n, CellData<2> &rho_ave)
+	MatData<2>& n, CellData<2> &rho_ave)
 {
 	// Cell-centric algorithms
 	// Computational loop 1 - average density in cell
@@ -46,7 +46,7 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
       else p = 0;
       },
       OUT<CellMatData<2>>(p),
-      IN<MatData<>>(n),
+      IN<MatData<2>>(n),
       IN<CellMatData<2>>(rho),
       IN<CellMatData<2>>(t),
       IN<CellMatData<2>>(Vf));
