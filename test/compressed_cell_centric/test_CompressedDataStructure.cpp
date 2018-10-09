@@ -43,6 +43,7 @@ void check_cell(const std::size_t cell_index,
 	ASSERT_EQ(cell.nmats, materials.size());
 
 	std::set<std::size_t> materials_from_structure;
+	// TODO: Handle single-mat cells
 	for (std::size_t material_index : structure.iteration(cell_index)) {
 		const MixedStorageCell& mixed_cell
 			= structure.mixed_cell_at(material_index);
