@@ -9,70 +9,64 @@
 
 #include "compressed_cell_centric/CompressedDataStructure.hpp"
 
+#include "Util.hpp"
+
 namespace MM::compressed_cell_centric {
 
 namespace {
 
-template <std::size_t N>
-std::array<std::vector<std::size_t>, N> get_raw_data() {
-	constexpr std::size_t M = 5;
-
-	srand(0); // Deterministic pseudo-random number generation.
-
-	std::array<std::vector<std::size_t>, N> res;
-
-	for (std::size_t i = 0; i < N; ++i) {
-		const std::size_t length = rand() % M;
-
-		res[i] = std::vector<std::size_t>(length);
-
-		for (std::size_t& material : res[i]) {
-			material = rand() % M; // TODO: Avoid duplicate materials.
-		}
-	}
-
-	return res;
-}
-
-template <std::size_t N>
 void check_cell(const std::size_t cell_index,
-	        const CompressedDataStructure<N>& structure,
+	        const CompressedDataStructure& structure,
 		const std::vector<std::size_t>& materials) {
 	const Cell& cell = structure.cell_at(cell_index);
-	
 	ASSERT_EQ(cell.nmats, materials.size());
+	
+	if (materials.size() <= 1) {
+		ASSERT_EQ(cell.imat, materials.at(0));
+	} else {
+		std::set<std::size_t> materials_from_structure;
+		for (std::size_t material_index : structure.mixed_mat_iteration(cell_index)) {
+			const MixedStorageCell& mixed_cell
+				= structure.mixed_cell_at(material_index);
+			ASSERT_EQ(mixed_cell.frac2cell, cell_index);
+			materials_from_structure.insert(mixed_cell.material);
+		}
 
-	std::set<std::size_t> materials_from_structure;
-	// TODO: Handle single-mat cells
-	for (std::size_t material_index : structure.iteration(cell_index)) {
-		const MixedStorageCell& mixed_cell
-			= structure.mixed_cell_at(material_index);
-		ASSERT_EQ(mixed_cell.frac2cell, cell_index);
-		materials_from_structure.insert(mixed_cell.material);
+		const std::set<std::size_t> raw_materials_as_set(materials.begin(),
+								 materials.end());
+		ASSERT_EQ(materials_from_structure, raw_materials_as_set);
 	}
-
-	const std::set<std::size_t> raw_materials_as_set(materials.begin(),
-							 materials.end());
-	ASSERT_EQ(materials_from_structure, raw_materials_as_set);
 }
 
-template <std::size_t N>
-void check_cells(const std::array<std::vector<std::size_t>, N>& raw_data,
-		 const CompressedDataStructure<N>& structure) {
-	for (std::size_t i = 0; i < N; ++i) {
+void check_cells(const std::vector<std::vector<std::size_t>>& raw_data,
+		 const CompressedDataStructure& structure) {
+	for (std::size_t i = 0; i < raw_data.size(); ++i) {
 		const std::vector<std::size_t>& materials
 			= raw_data.at(i);
 		check_cell(i, structure, materials);
 	}
 }
 
-TEST(CompressedDataStructure, create_data_structure) {
+TEST(CompressedDataStructure, create_and_check_data_structure) {
 	constexpr std::size_t N = 5;
-	
-	const std::array<std::vector<std::size_t>, N> arr = get_raw_data<N>();
-	const CompressedDataStructure<N> structure(arr);
+	constexpr std::size_t M = 5;
+	const std::vector<std::vector<std::size_t>> arr = get_raw_data(N, M);
+	const CompressedDataStructure structure(arr);
 
 	check_cells(arr, structure);
+}
+
+TEST(CompressedDataStructure,
+     mixed_mat_iteration_on_single_mat_cell_empty_iterator) {
+	const std::vector<std::vector<std::size_t>> materials = {
+		std::vector<std::size_t>{1}
+	};
+
+	const CompressedDataStructure structure(materials);
+
+	auto iteration = structure.mixed_mat_iteration(0);
+
+	ASSERT_EQ(iteration.begin(), iteration.end());
 }
 
 } // anonymous namespace

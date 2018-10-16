@@ -1,7 +1,6 @@
-#ifndef MM_COMPRESSED_DATA_STRUCTURE_HPP
-#define MM_COMPRESSED_DATA_STRUCTURE_HPP
+#ifndef MM_COMPRESSED_CELL_DATA_STRUCTURE_HPP
+#define MM_COMPRESSED_CELL_DATA_STRUCTURE_HPP
 
-#include <array>
 #include <cstddef>
 #include <vector>
 
@@ -29,13 +28,14 @@ struct MixedStorageCell {
 	std::size_t material;
 };
 
-template <std::size_t N>
 class CompressedDataStructure {
 public:
 	CompressedDataStructure(
-		const std::array<std::vector<std::size_t>, N>& materials)
+		const std::vector<std::vector<std::size_t>>& materials)
+		: structure(materials.size())
 	{
-		for (std::size_t i = 0; i < N; ++i) {
+		const std::size_t num_of_cells = materials.size();
+		for (std::size_t i = 0; i < num_of_cells; ++i) {
 			const std::vector<std::size_t>& materials_in_cell
 				= materials[i];
 			
@@ -87,7 +87,11 @@ public:
 
 		const MixedStorageIterator begin() const {
 			const Cell& cell = data.cell_at(index);
-			return MixedStorageIterator(data.mixed_storage, cell.imat);
+			if (cell.nmats <= 1) {
+				return MixedStorageIterator(data.mixed_storage, -1);
+			} else {
+				return MixedStorageIterator(data.mixed_storage, cell.imat);
+			}
 		}
 
 		const MixedStorageIterator end() const {
@@ -106,7 +110,7 @@ public:
 		return mixed_storage.at(index);
 	}
 
-	const MixedStorageIterationProxy iteration(const std::size_t index) const {
+	const MixedStorageIterationProxy mixed_mat_iteration(const std::size_t index) const {
 		return MixedStorageIterationProxy(*this, index);
 	}
 	
@@ -140,7 +144,7 @@ private:
 		mixed_storage.back().nextfrac = -1;
 	}
 
-	std::array<Cell, N> structure;
+	std::vector<Cell> structure;
 	std::vector<MixedStorageCell> mixed_storage;
 };
 
@@ -148,4 +152,4 @@ private:
 
 } // namespace MM
 
-#endif // MM_COMPRESSED_DATA_STRUCTURE_HPP
+#endif // MM_COMPRESSED_CELL_DATA_STRUCTURE_HPP

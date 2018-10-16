@@ -1,5 +1,6 @@
 SET(SRC_FILES
         compressed_cell_centric/test_CompressedDataStructure.cpp
+        compressed_cell_centric/test_Data.cpp
    )
 
 # include_directories(".")
