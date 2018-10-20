@@ -52,7 +52,7 @@ public:
 		{
 		}
 
-		const std::size_t operator*() const {
+		std::size_t operator*() const {
 			return ms_index;
 		}
 
@@ -79,14 +79,14 @@ public:
 	class MixedStorageIterationProxy {
 	public:
 		MixedStorageIterationProxy(const CompressedDataStructure& p_data,
-					   const std::size_t p_index)
+					   const std::size_t p_cell_index)
 			: data(p_data),
-			  index(p_index)
+			  cell_index(p_cell_index)
 		{
 		}
 
 		const MixedStorageIterator begin() const {
-			const Cell& cell = data.cell_at(index);
+			const Cell& cell = data.cell_at(cell_index);
 			if (cell.nmats <= 1) {
 				return MixedStorageIterator(data.mixed_storage, -1);
 			} else {
@@ -99,7 +99,7 @@ public:
 		}
 	private:
 		const CompressedDataStructure& data;
-		const std::size_t index;
+		const std::size_t cell_index;
 	};
 
 	const Cell& cell_at(const std::size_t index) const {
@@ -110,10 +110,13 @@ public:
 		return mixed_storage.at(index);
 	}
 
-	const MixedStorageIterationProxy mixed_mat_iteration(const std::size_t index) const {
-		return MixedStorageIterationProxy(*this, index);
+	const MixedStorageIterationProxy mixed_mat_iteration(const std::size_t cell_index) const {
+		return MixedStorageIterationProxy(*this, cell_index);
 	}
-	
+
+	std::size_t mixed_storage_size() const {
+		return mixed_storage.size();
+	}
 private:
 	void handle_cell(std::size_t cell_index,
 			 const std::vector<std::size_t>& materials_in_cell) {
