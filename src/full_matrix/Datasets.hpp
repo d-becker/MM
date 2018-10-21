@@ -58,6 +58,10 @@ public:
 	{
 	}
 
+	std::size_t get_size() const {
+		return material_data.size();
+	}
+	
 	const dtype& operator[](const std::size_t index) const {
 		return material_data[index];
 	}

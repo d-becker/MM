@@ -114,6 +114,10 @@ public:
 		return MixedStorageIterationProxy(*this, cell_index);
 	}
 
+	std::size_t cell_number() const {
+		return structure.size();
+	}
+	
 	std::size_t mixed_storage_size() const {
 		return mixed_storage.size();
 	}

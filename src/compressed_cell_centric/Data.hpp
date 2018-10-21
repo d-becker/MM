@@ -20,7 +20,11 @@ public:
 	     const std::vector<std::vector<std::size_t>>& materials)
 		: mat_number(count_materials(materials)),
 		  size(p_size),
-		  structure(CompressedDataStructure(materials))
+		  structure(CompressedDataStructure(materials)),
+		  cell_only_buffers(),
+		  mat_only_buffers(),
+		  cell_values(),
+		  mixed_storage_values()
 	{
 		
 	}
@@ -33,14 +37,26 @@ public:
 		return mat_number;
 	}
 
-	// CellData<N, dtype> new_cell_data() {
-	// }
+	CellData<N, dtype> new_cell_data() {
+		cell_only_buffers.emplace_back(size);
+		return CellData<N, dtype>(cell_only_buffers.back());
+	}
 
-	// MatData<dtype> new_mat_data() {
-	// }
+	MatData<dtype> new_mat_data() {
+		mat_only_buffers.emplace_back(mat_number, 0.0);
+		return MatData<dtype>(mat_only_buffers.back());
+	}
 
-	// CellMatData<N, dtype> new_cell_mat_data() {
-	// }
+	CellMatData<N, dtype> new_cell_mat_data() {
+		cell_values.emplace_back(structure.cell_number(), 0.0);
+		mixed_storage_values.emplace_back(
+			structure.mixed_storage_size(), 0.0);
+
+		return CellMatData<N, dtype>(size,
+					     structure,
+					     cell_values.back(),
+					     mixed_storage_values.back());
+	}
 
 private:
 	static
@@ -60,6 +76,11 @@ private:
 	const std::size_t mat_number;
 	const std::array<std::size_t, N> size;
 	CompressedDataStructure structure;
+
+	std::list<MultidimArray<N, dtype>> cell_only_buffers;
+        std::list<std::vector<dtype>> mat_only_buffers;
+	std::list<std::vector<dtype>> cell_values;
+	std::list<std::vector<dtype>> mixed_storage_values;
 };
 
 } // namespace compressed_cell_centric
