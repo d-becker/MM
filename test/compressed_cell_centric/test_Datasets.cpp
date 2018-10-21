@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdlib>
@@ -58,6 +59,10 @@ TEST_F(CompressedCellMatData, access_single_mat_cell) {
 	const Coords<2> index = {0u, 0u};
 	const double value = cell_mat_data.at(index, 0);
 	ASSERT_EQ(value, cell_values.at(0));
+
+	const double new_value = value + 1.0;
+	cell_mat_data.at(index, 0) = new_value;
+	ASSERT_EQ(new_value, cell_mat_data.at(index, 0));
 }
 
 TEST_F(CompressedCellMatData, access_multimat_cell) {
@@ -69,6 +74,10 @@ TEST_F(CompressedCellMatData, access_multimat_cell) {
 	const std::size_t mat_index = 0;
 	const double value = cell_mat_data.at(index, mat_index);
 	ASSERT_EQ(value, mixed_storage_values.at(0));
+
+	const double new_value = value + 1.0;
+	cell_mat_data.at(index, mat_index) = new_value;
+	ASSERT_EQ(new_value, cell_mat_data.at(index, mat_index));
 }
 
 TEST_F(CompressedCellMatData, single_mat_iteration) {
@@ -106,6 +115,23 @@ TEST_F(CompressedCellMatData, multimat_iteration) {
 	}
 
 	ASSERT_EQ(actual, expected);
+
+	std::vector<double> new_expected;
+	std::transform(expected.begin(),
+		       expected.end(),
+		       std::back_inserter(new_expected),
+		       [](const double value) {return value + 1.0;});
+
+	for (double& value : iteration_proxy) {
+		value += 1.0;
+	}
+
+	std::vector<double> new_actual;
+	for (double value : iteration_proxy) {
+		new_actual.push_back(value);
+	}
+
+	ASSERT_EQ(new_actual, new_expected);
 }
 
 } // anonymous namespace
