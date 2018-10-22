@@ -43,6 +43,14 @@ public:
 	dtype& at(const Coords<N>& index) {
 		return buffer.at(index);
 	}
+
+	const dtype& at_raw_index(const std::size_t index) const {
+		return buffer.at_raw_index(index);
+	}
+
+	dtype& at_raw_index(const std::size_t index) {
+		return buffer.at_raw_index(index);
+	}
 	
 private:
 	MultidimArray<N, dtype>& buffer;

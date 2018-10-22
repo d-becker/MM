@@ -52,9 +52,7 @@ public:
 		mixed_storage_values.emplace_back(
 			structure.mixed_storage_size(), 0.0);
 
-		return CellMatData<N, dtype>(size,
-					     structure,
-					     cell_values.back(),
+		return CellMatData<N, dtype>(cell_values.back(),
 					     mixed_storage_values.back());
 	}
 

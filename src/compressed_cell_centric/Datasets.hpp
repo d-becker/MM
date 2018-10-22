@@ -24,8 +24,8 @@ class CellMatData {
 public:
 	using dtype = _dtype;
 
-	CellMatData(std::vector<dtype> p_cell_values,
-		    std::vector<dtype> p_mixed_storage_values)
+	CellMatData(std::vector<dtype>& p_cell_values,
+		    std::vector<dtype>& p_mixed_storage_values)
 		: cell_values(p_cell_values),
 		  mixed_storage_values(p_mixed_storage_values)
 	{
@@ -46,11 +46,19 @@ public:
 	const dtype& mixed_storage_value_at(const std::size_t index) const {
 		return mixed_storage_values.at(index);
 	}
+
+	std::size_t cell_number() const {
+		return cell_values.size();
+	}
+
+	std::size_t mixed_storage_size() const {
+		return mixed_storage_values.size();
+	}
 private:
 	// const std::array<std::size_t, N>& size;
 	// const CompressedDataStructure& structure;
-	std::vector<dtype> cell_values;
-	std::vector<dtype> mixed_storage_values;
+	std::vector<dtype>& cell_values;
+	std::vector<dtype>& mixed_storage_values;
 };
 
 } // namespace compressed_cell_centric

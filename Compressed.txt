@@ -14,3 +14,6 @@ A Computation mindenképpen külön, mert az anyagokon nincs random access.
 Külön névtérbe tenni a különböző implementációkat, lehet usingolni vagy define-olni a névteret.
 
 Koordinátál: lehet, hogy intuitívabb, ha nem külön init list, és a GPU-n könnyebb, ha nem std objektum.
+
+
+Ha összehasonlítjuk a full_matrix és a compressed futásidejét, figyeljünk rá, hogy a full_matrix számol azzal is, hogy redukálhatunk nem minden térbeli dimenzió mentén, ezért lassabb lehet.
