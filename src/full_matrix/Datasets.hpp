@@ -27,6 +27,10 @@ public:
 	const std::array<std::size_t, N>& get_size() const {
 		return buffer.get_size();
 	}
+
+	std::size_t get_flat_size() const {
+		return buffer.get_flat_size();
+	}
 	
 	const dtype& operator[](const Coords<N>& index) const {
 		return buffer[index];

@@ -1,13 +1,13 @@
 #include <cmath>
 #include <iostream>
 
+
+#include "IndexGenerator.hpp"
+#include "compressed_cell_centric/CompressedDataStructure.hpp"
 #include "full_matrix/Arguments.hpp"
 #include "full_matrix/Computation.hpp"
 #include "full_matrix/Data.hpp"
 #include "full_matrix/Datasets.hpp"
-#include "full_matrix/IndexGenerator.hpp"
-
-#include "compressed_cell_centric/CompressedDataStructure.hpp"
 
 using namespace std;
 using namespace MM;

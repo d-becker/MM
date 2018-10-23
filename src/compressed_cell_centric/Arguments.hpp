@@ -1,5 +1,5 @@
-#ifndef MM_ARGUMENTS_HPP
-#define MM_ARGUMENTS_HPP
+#ifndef MM_COMPRESSED_CELL_ARGUMENTS_HPP
+#define MM_COMPRESSED_CELL_ARGUMENTS_HPP
 
 #include <algorithm>
 #include <functional>
@@ -269,4 +269,4 @@ private:
 
 } // namespace MM
 
-#endif // MM_ARGUMENTS_HPP
+#endif // MM_COMPRESSED_CELL_ARGUMENTS_HPP

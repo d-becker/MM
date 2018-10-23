@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "MultidimArray.hpp"
 #include "compressed_cell_centric/CompressedDataStructure.hpp"
 #include "compressed_cell_centric/Datasets.hpp"
 
@@ -54,6 +55,13 @@ public:
 
 		return CellMatData<N, dtype>(cell_values.back(),
 					     mixed_storage_values.back());
+	}
+
+	CompressedDataStructure::CellIteration
+	cell_iteration(const Coords<N>& coords) const {
+		const std::size_t flat_index
+			= multidim_index_to_raw(coords, size);
+		return structure.cell_iteration(flat_index);
 	}
 
 private:

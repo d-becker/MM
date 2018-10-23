@@ -36,6 +36,10 @@ public:
 		return size;
 	}
 
+	std::size_t get_flat_size() const {
+		return buffer.size();
+	}
+
 	const dtype& operator[](const Coords<N>& coords) const {
 		std::size_t index = multidim_index_to_raw(coords, size);
 		return buffer.at(index);

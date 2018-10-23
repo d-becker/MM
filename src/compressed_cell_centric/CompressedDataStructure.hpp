@@ -72,11 +72,11 @@ public:
 		}
 	}
 
-	class Iterator {
+	class CellIterator {
 	public:
-		Iterator(const CompressedDataStructure& p_structure,
-			 const std::size_t p_cell_index,
-			 const std::size_t p_mixed_storage_index)
+		CellIterator(const CompressedDataStructure& p_structure,
+			     const std::size_t p_cell_index,
+			     const std::size_t p_mixed_storage_index)
 			: structure(p_structure),
 			  cell_index(p_cell_index),
 			  mixed_storage_index(p_mixed_storage_index)
@@ -107,7 +107,7 @@ public:
 			return std::make_pair(cell_mat_index, value_index);
 		}
 		
-		Iterator& operator++() {
+		CellIterator& operator++() {
 			const Cell& cell = structure.cell_at(cell_index);
 
 			if (cell.nmats > 1) {
@@ -122,54 +122,62 @@ public:
 				}
 			}
 
-			// Either this is a single material cell or we
-			// have gone past the last material in the cell.
-			++cell_index;
-
-			if (cell_index < structure.cell_number()) {
-				const Cell& new_cell
-					= structure.cell_at(cell_index);
-				mixed_storage_index = new_cell.imat;
-			} else {
-				mixed_storage_index = -1;
-			}
-			
+			mixed_storage_index = -1;
 			return *this;
 		}
 
-		bool operator==(const Iterator& other) const {
+		bool operator==(const CellIterator& other) const {
 			return &structure == &other.structure
 				&& cell_index == other.cell_index
 				&& mixed_storage_index
 				    == other.mixed_storage_index;
 		}
 
-		bool operator!=(const Iterator& other) const {
+		bool operator!=(const CellIterator& other) const {
 			return !(*this == other);
 		}
 	private:
 		const CompressedDataStructure& structure;
-		std::size_t cell_index;
+		const std::size_t cell_index;
 		std::size_t mixed_storage_index;
 	};
 
-		Iterator begin() const {
-		if (cell_number() == 0) {
-			return Iterator(*this, 0, -1);
+	class CellIteration {
+	public:
+		CellIteration(const CompressedDataStructure& p_structure,
+			      const std::size_t p_cell_index)
+			: structure(p_structure),
+			  cell_index(p_cell_index)
+		{
 		}
+
+		CellIterator begin() const {
+			if (structure.cell_number() == 0) {
+				return CellIterator(structure, 0, -1);
+			}
 		
-		const Cell& first_cell = cell_at(0);
-		if (first_cell.nmats <= 1) {
-			return Iterator(*this, 0, -1);
+			const Cell& cell = structure.cell_at(cell_index);
+			if (cell.nmats <= 1) {
+				return CellIterator(structure, cell_index, 0);
+			}
+		
+			return CellIterator(structure,
+					    cell_index,
+					    cell.imat);
 		}
-		
-		return Iterator(*this, 0, first_cell.imat);
-	}
 
-	Iterator end() const {
-		return Iterator(*this, cell_number(), -1);
-	}
+		CellIterator end() const {
+			return CellIterator(structure, cell_index, -1);
+		}
+	private:
+		const CompressedDataStructure& structure;
+		const std::size_t cell_index;
+	};
 
+	CellIteration cell_iteration(const std::size_t cell_index) const {
+		return CellIteration(*this, cell_index);
+	}
+	
 	const Cell& cell_at(const std::size_t index) const {
 		return structure.at(index);
 	}
