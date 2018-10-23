@@ -228,42 +228,40 @@ private:
 // };
 
 
-// template<typename dtype = double>
-// class FREE_SCALAR {
-// public:
-// 	FREE_SCALAR(const dtype p_value)
-// 		: value(p_value)
-// 	{
-// 	}
+template<typename dtype = double>
+class FREE_SCALAR {
+public:
+	FREE_SCALAR(const dtype p_value)
+		: value(p_value)
+	{
+	}
 
-// 	template<std::size_t N>
-// 	const dtype& get(const Coords<N>& cell_index,
-// 			 const std::size_t mat_index) const {
-// 		return value;
-// 	}
-// private:
-// 	const dtype value;
-// };
+	const dtype& get(const CellMatIndex& cell_mat_index,
+			 const ValueIndex& value_index) const {
+		return value;
+	}
+private:
+	const dtype value;
+};
 
-// template<typename dtype = double>
-// class FREE_ARRAY {
-// public:
-// 	using array_type = std::vector<dtype>;
+template<typename dtype = double>
+class FREE_ARRAY {
+public:
+	using array_type = std::vector<dtype>;
 	
-// 	FREE_ARRAY(const array_type& p_values)
-// 		: values(p_values)
-// 	{
-// 	}
+	FREE_ARRAY(const array_type& p_values)
+		: values(p_values)
+	{
+	}
 
-// 	template<std::size_t N>
-// 	const array_type& get(const Coords<N>& cell_index,
-// 			      const std::size_t mat_index) const {
-// 		return values;
-// 	}
+	const array_type& get(const CellMatIndex& cell_mat_index,
+			      const ValueIndex& value_index) const {
+		return values;
+	}
 	
-// private:
-// 	const array_type& values;
-// };
+private:
+	const array_type& values;
+};
 
 } // namespace compressed_cell_centric
 

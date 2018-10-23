@@ -106,6 +106,20 @@ protected:
 		}
 	}
 
+	void check_multiplication(const CellMatData<2> result,
+				  const CellMatData<2> original,
+				  const double factor) {
+		for (std::size_t i = 0; i < result.cell_number(); ++i) {
+			ASSERT_EQ(result.cell_value_at(i),
+				  original.cell_value_at(i) * factor);
+		}
+
+		for (std::size_t i = 0; i < result.mixed_storage_size(); ++i) {
+			ASSERT_EQ(result.mixed_storage_value_at(i),
+				  original.mixed_storage_value_at(i) * factor);
+		}
+	}
+
 	const std::array<std::size_t, 2> size;
 	const std::vector<std::vector<std::size_t>> raw_materials;
 	Data<2> data;
@@ -164,6 +178,31 @@ TEST_F(CompressedComputation, in_reduce) {
 			    REDUCE<CellData<2>>(sum, mass_by_cell));
 
 	check_mass_by_cell(mass_by_cell, density, volume);
+}
+
+TEST_F(CompressedComputation, free_scalar) {
+	CellMatData<2> density = data.new_cell_mat_data();
+
+	fill_density(density);
+
+	CellMatData<2> double_density = data.new_cell_mat_data();
+	const double factor = 2.0;
+
+	auto kernel = [] (double density,
+			  const double& free_scalar,
+			  double& double_density) {
+                double_density = density * free_scalar;
+	};
+
+	IndexGenerator<2> index_generator({0, 0}, {2, 2});
+	Computation<2> computation(data, index_generator);
+	
+        computation.compute(kernel,
+			    IN<CellMatData<2>>(density),
+			    FREE_SCALAR<>(factor),
+			    OUT<CellMatData<2>>(double_density));
+
+        check_multiplication(double_density, density, factor);
 }
 
 

@@ -138,6 +138,26 @@ TEST(test_REDUCE, mat_data) {
 	ASSERT_EQ(arr.at(mat_index), reducer(value1, value2));
 }
 
+TEST(test_FREE_SCALAR, free_scalar) {
+	const double value = 2.5;
+	const FREE_SCALAR<double> free_scalar(value);
+
+	const CellMatIndex cell_mat_index(0, 1);
+	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
+
+	ASSERT_EQ(free_scalar.get(cell_mat_index, value_index), value);
+}
+
+TEST(test_FREE_ARRAY, free_array) {
+	const std::vector<double> value = {2.5, 3.0};
+	const FREE_ARRAY<double> free_array(value);
+
+	const CellMatIndex cell_mat_index(0, 1);
+	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
+
+	ASSERT_EQ(free_array.get(cell_mat_index, value_index), value);
+}
+
 } // anonymous namespace
 
 } // MM::compressed_cell_centric
