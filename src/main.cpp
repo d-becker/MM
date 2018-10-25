@@ -143,20 +143,14 @@ void test1() {
 	// Output
 	CellMatData<2> mass = data.new_cell_mat_data();
 
-	auto kernel1 = [] (double density,
-			  double volume,
-			  double& mass) {
-		mass = density * volume;
-	};
-
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
 	
-  computation.compute([] (double density,
-			  double volume,
-			  double& mass) {
+	computation.compute([] (double density,
+				double volume,
+				double& mass) {
 		mass = density * volume;
-	};,
+	},
 			    IN<CellMatData<2>>(density),
 			    IN<CellMatData<2>>(volume),
 			    OUT<CellMatData<2>>(mass));
@@ -205,19 +199,13 @@ void test2() {
 		return left + right;
 	};
 	
-	auto kernel = [] (double density,
-			  double volume,
-			  ReduceProxy<double> mass_by_cell) {
-		mass_by_cell << density * volume;
-	};
-	
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
 	computation.compute([] (double density,
-			  double volume,
-			  ReduceProxy<double> mass_by_cell) {
+				double volume,
+				ReduceProxy<double> mass_by_cell) {
 		mass_by_cell << density * volume;
-	};,
+	},
 			    IN<CellMatData<2>>(density),
 			    IN<CellMatData<2>>(volume),
 			    REDUCE<CellData<2>>(INC, mass_by_cell));
