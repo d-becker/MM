@@ -33,9 +33,9 @@ public:
 	
 	}
 
-private:
 	Data<N, dtype>& data;
 	IndexGenerator<N> index_generator;
+private:
 };
 
 } // namespace full_matrix
