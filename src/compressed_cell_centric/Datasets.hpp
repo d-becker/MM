@@ -19,9 +19,10 @@ using CellData = full_matrix::CellData<_N, _dtype>;
 template<typename _dtype = double>
 using MatData = full_matrix::MatData<_dtype>;
 
-template<std::size_t N, typename _dtype = double>
+template<std::size_t _N, typename _dtype = double>
 class CellMatData {
 public:
+	constexpr static std::size_t N = _N;
 	using dtype = _dtype;
 
 	CellMatData(std::vector<dtype>& p_cell_values,

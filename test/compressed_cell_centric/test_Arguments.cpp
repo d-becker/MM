@@ -2,13 +2,19 @@
 
 #include "gtest/gtest.h"
 
+#include "Coords.hpp"
 #include "MultidimArray.hpp"
 #include "compressed_cell_centric/Arguments.hpp"
+#include "compressed_cell_centric/Data.hpp"
 #include "compressed_cell_centric/Datasets.hpp"
 
 namespace MM::compressed_cell_centric {
 
 namespace {
+
+Data<2, double> dummy_data() {
+	return Data<2, double>({2, 2}, {});
+}
 
 TEST(test_IN, cell_data) {
 	MultidimArray<2, double> arr({2, 2});
@@ -22,7 +28,9 @@ TEST(test_IN, cell_data) {
 	const CellMatIndex cell_mat_index(cell_index, 0);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
 
-	ASSERT_EQ(in.get(cell_mat_index, value_index), value);
+	ASSERT_EQ(in.get(Coords<2>(0u, 0u), dummy_data(),
+			 cell_mat_index, value_index),
+		  value);
 }
 
 TEST(test_IN, mat_data) {
@@ -36,7 +44,9 @@ TEST(test_IN, mat_data) {
 	const CellMatIndex cell_mat_index(0, 1);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
 
-	ASSERT_EQ(in.get(cell_mat_index, value_index), value);
+	ASSERT_EQ(in.get(Coords<2>(0u, 0u), dummy_data(),
+			 cell_mat_index, value_index),
+		  value);
 }
 
 TEST(test_IN, cell_mat_data) {
@@ -50,7 +60,8 @@ TEST(test_IN, cell_mat_data) {
 	const std::size_t mixed_index = 2;
 	const ValueIndex value_index(ValueIndex::Type::MULTIMAT, mixed_index);
 
-	ASSERT_EQ(in.get(cell_mat_index, value_index),
+	ASSERT_EQ(in.get(Coords<2>(0u, 0u), dummy_data(),
+			 cell_mat_index, value_index),
 		  mixed_values.at(mixed_index));
 }
 
@@ -65,7 +76,8 @@ TEST(test_OUT, cell_data) {
 	const CellMatIndex cell_mat_index(cell_index, 0);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
 
-	out.get(cell_mat_index, value_index) = value;
+	out.get(Coords<2>(0u, 0u), dummy_data(),
+		cell_mat_index, value_index) = value;
 	ASSERT_EQ(arr.at_raw_index(cell_index), value);
 }
 
@@ -80,7 +92,8 @@ TEST(test_OUT, mat_data) {
 	const CellMatIndex cell_mat_index(0, mat_index);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
 
-	out.get(cell_mat_index, value_index) = value;
+	out.get(Coords<2>(0u, 0u), dummy_data(),
+		cell_mat_index, value_index) = value;
 	ASSERT_EQ(arr.at(mat_index), value);
 }
 
@@ -96,7 +109,8 @@ TEST(test_OUT, cell_mat_data) {
 	const ValueIndex value_index(ValueIndex::Type::MULTIMAT, mixed_index);
 
 	const double value = 12.3;
-	out.get(cell_mat_index, value_index) = value;
+	out.get(Coords<2>(0u, 0u), dummy_data(),
+		cell_mat_index, value_index) = value;
 	ASSERT_EQ(mixed_values.at(mixed_index), value);
 }
 
@@ -114,8 +128,10 @@ TEST(test_REDUCE, cell_data) {
 	const CellMatIndex cell_mat_index2(cell_index, 1);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, cell_index);
 
-	reduce.get(cell_mat_index1, value_index) << value1;
-	reduce.get(cell_mat_index2, value_index) << value2;
+	reduce.get(Coords<2>(0u, 0u), dummy_data(),
+		   cell_mat_index1, value_index) << value1;
+	reduce.get(Coords<2>(0u, 0u), dummy_data(),
+		   cell_mat_index2, value_index) << value2;
 	ASSERT_EQ(arr.at_raw_index(cell_index), reducer(value1, value2));
 }
 
@@ -133,9 +149,62 @@ TEST(test_REDUCE, mat_data) {
 	const CellMatIndex cell_mat_index2(1, mat_index);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
 
-	reduce.get(cell_mat_index1, value_index) << value1;
-	reduce.get(cell_mat_index2, value_index) << value2;
+	reduce.get(Coords<2>(0u, 0u), dummy_data(),
+		   cell_mat_index1, value_index) << value1;
+	reduce.get(Coords<2>(0u, 0u), dummy_data(),
+		   cell_mat_index2, value_index) << value2;
 	ASSERT_EQ(arr.at(mat_index), reducer(value1, value2));
+}
+
+TEST(test_NEIGH, has_neigh) {
+	Stencil<2> stencil({{0, 0}, {0, 1}});
+
+        MultidimArray<2, double> arr({2, 2});
+	const CellData<2> cell_data(arr);
+		
+	NEIGH<CellData<2>> neigh(cell_data, stencil);
+
+	NeighProxy<CellData<2>> proxy = neigh.get(
+		Coords<2>(0u, 0u),
+		dummy_data(),
+		CellMatIndex(0, 0),
+		ValueIndex(ValueIndex::Type::SINGLE_MAT, 0));
+
+	ASSERT_TRUE(proxy.has_neigh({0, 0}));
+	ASSERT_TRUE(proxy.has_neigh({0, 1}));
+	ASSERT_FALSE(proxy.has_neigh({1, 0}));
+}
+
+TEST(test_NEIGH, get_neigh) {
+	Stencil<2> stencil({{0, 0}, {0, 1}});
+
+        MultidimArray<2, double> arr({2, 2});
+	const double value1 = 2.0;
+	const double value2 = 4.0;
+	arr.at(Coords<2>(0u, 0u)) = value1;
+	arr.at(Coords<2>(0u, 1u)) = value2;
+	const CellData<2> cell_data(arr);
+		
+	NEIGH<CellData<2>> neigh(cell_data, stencil);
+
+	NeighProxy<CellData<2>> proxy = neigh.get(
+		Coords<2>(0u, 0u),
+		dummy_data(),
+		CellMatIndex(0, 0),
+		ValueIndex(ValueIndex::Type::SINGLE_MAT, 0));
+
+	Data<2, double> data = dummy_data();
+	ASSERT_EQ(value1, proxy.get_neigh({0, 0}));
+	ASSERT_EQ(value2, proxy.get_neigh({0, 1}));
+}
+
+TEST(test_INDEX, index) {
+	const Coords<2> coords(2u, 4u);
+	INDEX<2> index;
+
+	ASSERT_EQ(index.get(coords, dummy_data(), CellMatIndex(0, 0),
+			    ValueIndex(ValueIndex::Type::SINGLE_MAT, 0)),
+		  coords);
 }
 
 TEST(test_FREE_SCALAR, free_scalar) {
@@ -145,7 +214,9 @@ TEST(test_FREE_SCALAR, free_scalar) {
 	const CellMatIndex cell_mat_index(0, 1);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
 
-	ASSERT_EQ(free_scalar.get(cell_mat_index, value_index), value);
+	ASSERT_EQ(free_scalar.get(Coords<2>(0u, 0u), dummy_data(),
+				  cell_mat_index, value_index),
+		  value);
 }
 
 TEST(test_FREE_ARRAY, free_array) {
@@ -155,7 +226,9 @@ TEST(test_FREE_ARRAY, free_array) {
 	const CellMatIndex cell_mat_index(0, 1);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
 
-	ASSERT_EQ(free_array.get(cell_mat_index, value_index), value);
+	ASSERT_EQ(free_array.get(Coords<2>(0u, 0u), dummy_data(),
+				 cell_mat_index, value_index),
+		  value);
 }
 
 } // anonymous namespace

@@ -11,6 +11,7 @@
 #include "Coords.hpp"
 #include "compressed_cell_centric/CompressedDataStructure.hpp"
 #include "compressed_cell_centric/Datasets.hpp"
+#include "compressed_cell_centric/Data.hpp"
 
 namespace MM {
 
@@ -55,8 +56,11 @@ public:
 		// 	      || std::is_same<T, MatData<dtype>>::value
 		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
-	
-	const dtype& get(const CellMatIndex& cell_mat_index,
+
+	template<std::size_t N>
+	const dtype& get(const Coords<N>&,
+			 const Data<N, dtype>&,
+			 const CellMatIndex& cell_mat_index,
 			 const ValueIndex& value_index) const {
 		return unified_data_get(data, cell_mat_index, value_index);
 	}
@@ -68,6 +72,8 @@ private:
 template<typename T>
 class OUT {
 public:
+	using dtype = typename T::dtype;
+
         OUT(T p_data) : data(p_data)
 	{
 		// TODO: Solve this.
@@ -78,8 +84,11 @@ public:
 		// 	      || std::is_same<T, MatData<dtype>>::value
 		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
-	
-	typename T::dtype& get(const CellMatIndex& cell_mat_index,
+
+	template <std::size_t N>
+	typename T::dtype& get(const Coords<N>&,
+			       const Data<N, dtype>&,
+			       const CellMatIndex& cell_mat_index,
 			       const ValueIndex& value_index) {
 		return unified_data_get(data, cell_mat_index, value_index);
 	}
@@ -124,7 +133,10 @@ public:
 		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 
-	ReduceProxy<typename T::dtype> get(const CellMatIndex& cell_mat_index,
+	template<std::size_t N>
+	ReduceProxy<typename T::dtype> get(const Coords<N>&,
+					   const Data<N, dtype>&,
+					   const CellMatIndex& cell_mat_index,
 					   const ValueIndex& value_index) {
 		dtype& value
 			= unified_data_get(data, cell_mat_index, value_index);
@@ -137,95 +149,152 @@ private:
 	T data;
 };
 
-// template <std::size_t N>
-// class Stencil {
-// public:
-// 	Stencil(std::vector<Offsets<N>> p_offsets)
-// 		: offsets(p_offsets)
-// 	{
-// 	}
+template <std::size_t N>
+class Stencil {
+public:
+	Stencil(std::vector<Offsets<N>> p_offsets)
+		: offsets(p_offsets)
+	{
+	}
 
-// 	bool contains_offset(const Offsets<N>& offset) const {
-// 		auto it = std::find(offsets.begin(), offsets.end(), offset);
-// 		return it != offsets.end();
-// 	}
+	bool contains_offset(const Offsets<N>& offset) const {
+		auto it = std::find(offsets.begin(), offsets.end(), offset);
+		return it != offsets.end();
+	}
 	
-// private:
-// 	std::vector<Offsets<N>> offsets;
-// };
+private:
+	std::vector<Offsets<N>> offsets;
+};
 
-// template<typename T>
-// class NeighProxy {
-// public:
-// 	using dtype = typename T::dtype;
+template<typename T>
+class NeighProxy {
+public:
+	using dtype = typename T::dtype;
 
-// 	NeighProxy(const Coords<T::N> p_cell_coords,
-// 		   const std::size_t p_mat_index,
-// 		   T p_data, const Stencil<T::N> p_stencil)
-// 		: cell_coords(p_cell_coords), mat_index(p_mat_index),
-// 		  data(p_data), stencil(p_stencil)
-// 	{
-// 	}
+	NeighProxy(const Data<T::N, dtype>& p_data,
+		   const Coords<T::N> p_cell_coords,
+		   const CellMatIndex& p_cell_mat_index,
+		   const ValueIndex& p_value_index,
+		   T p_dataset,
+		   const Stencil<T::N> p_stencil)
+		: data(p_data),
+		  cell_coords(p_cell_coords),
+		  cell_mat_index(p_cell_mat_index),
+		  value_index(p_value_index),
+		  dataset(p_dataset),
+		  stencil(p_stencil)
+	{
+	}
 
-// 	const dtype& get_neigh(const Offsets<T::N>& offset) const {
-// 		if (!stencil.contains_offset(offset)) {
-// 			throw "No such offset in stencil.";
-// 		}
+	bool has_neigh(const Offsets<T::N>& offset) const {
+		return stencil.contains_offset(offset);
+	}
+
+	const dtype& get_neigh(const Offsets<T::N>& offset) const {
+		if (!has_neigh(offset)) {
+			throw "No such offset in stencil.";
+		}
+
+		const Coords<T::N> neighbour_coords = cell_coords + offset;
+
+		if (std::is_same<T, CellData<T::N, dtype>>::value) {
+			return get_neigh_cell_data(neighbour_coords);
+		} else {
+			return get_neigh_cell_mat_data(neighbour_coords);
+		}
+	}
+
+	const dtype& operator[](const Offsets<T::N>& offset) const {
+		return get_neigh(offset);
+	}
+	
+private:
+	const dtype&
+	get_neigh_cell_data(const Coords<T::N>& neighbour_coords) const {
+		const std::size_t flat_index = multidim_index_to_raw(
+			neighbour_coords,
+			data.get_size());
+		const CellMatIndex n_cell_mat_index(flat_index, -1);
+		const ValueIndex n_value_index(ValueIndex::Type::SINGLE_MAT,
+					       -1);
+		return unified_data_get(dataset,
+					n_cell_mat_index,
+					n_value_index);
+	}
+
+	const dtype&
+	get_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
+		for (const std::pair<CellMatIndex, ValueIndex> pair
+			     : data.cell_iteration(neighbour_coords)) {
+			const CellMatIndex& n_cell_mat_index = pair.first;
+			if (n_cell_mat_index.mat_index
+			    == cell_mat_index.mat_index) {
+				const ValueIndex& n_value_index = pair.second;
+				return unified_data_get(dataset,
+							n_cell_mat_index,
+							n_value_index);
+			}
+		}
+
+		throw "Material not found.";
+	}
+	
+	const Data<T::N, dtype>& data;
+	const Coords<T::N> cell_coords;
+	const CellMatIndex& cell_mat_index;
+	const ValueIndex& value_index;
+
+	T dataset;
+	const Stencil<T::N> stencil;	
+};
+
+template<typename T>
+class NEIGH {
+public:	
+	using dtype = typename T::dtype;
+	
+	NEIGH(T p_dataset, const Stencil<T::N> p_stencil)
+		: dataset(p_dataset), stencil(p_stencil)
+	{
+		// constexpr std::size_t N = T::N;
 		
-// 		const Coords<T::N> neighbour_coords = cell_coords + offset;
-// 		return unified_data_get(data, neighbour_coords, mat_index);
-// 	}
+		// static_assert(std::is_same<T, CellData<N, dtype>>::value
+		// 	      || std::is_same<T, MatData<dtype>>::value
+		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
+	}
 
-// 	const dtype& operator[](const Offsets<T::N>& offset) const {
-// 		return get_neigh(offset);
-// 	}
-	
-// private:
-// 	const Coords<T::N> cell_coords;
-// 	const std::size_t mat_index;
+	NeighProxy<T>
+	get(const Coords<T::N>& coords,
+	    const Data<T::N, dtype>& data,
+	    const CellMatIndex& cell_mat_index,
+	    const ValueIndex& value_index) {
+		return NeighProxy<T>(data,
+				     coords,
+				     cell_mat_index,
+				     value_index,
+				     dataset,
+				     stencil);
+	}
 
-// 	T data;
-// 	const Stencil<T::N> stencil;	
-// };
+private:
+	T dataset;
+	const Stencil<T::N> stencil;
+};
 
-// template<typename T>
-// class NEIGH {
-// public:	
-// 	using dtype = typename T::dtype;
-	
-// 	NEIGH(T p_data, const Stencil<T::N> p_stencil)
-// 		: data(p_data), stencil(p_stencil)
-// 	{
-// 		constexpr std::size_t N = T::N;
-		
-// 		static_assert(std::is_same<T, CellData<N, dtype>>::value
-// 			      || std::is_same<T, MatData<dtype>>::value
-// 			      || std::is_same<T, CellMatData<N, dtype>>::value);
-// 	}
+template <std::size_t N>
+class INDEX {
+public:
+	INDEX() {};
 
-// 	NeighProxy<T>
-// 	get(const Coords<T::N>& cell_index, const std::size_t mat_index) {
-// 		return NeighProxy<T>(cell_index,
-// 				     mat_index,
-// 				     data,
-// 				     stencil);
-// 	}
-
-// private:
-// 	T data;
-// 	const Stencil<T::N> stencil;
-// };
-
-// template <std::size_t N>
-// class INDEX {
-// public:
-// 	INDEX() {};
-
-// 	Coords<N>
-// 	get(const Coords<N>& cell_index, const std::size_t mat_index) {
-// 		return cell_index;
-// 	}
-// };
+	template<typename dtype>
+	Coords<N>
+	get(const Coords<N>& cell_index,
+	    const Data<N, dtype>&,
+	    const CellMatIndex&,
+	    const ValueIndex&) {
+		return cell_index;
+	}
+};
 
 
 template<typename dtype = double>
@@ -236,7 +305,10 @@ public:
 	{
 	}
 
-	const dtype& get(const CellMatIndex& cell_mat_index,
+	template<std::size_t N>
+	const dtype& get(const Coords<N>&,
+			 const Data<N, dtype>&,
+			 const CellMatIndex& cell_mat_index,
 			 const ValueIndex& value_index) const {
 		return value;
 	}
@@ -254,7 +326,10 @@ public:
 	{
 	}
 
-	const array_type& get(const CellMatIndex& cell_mat_index,
+	template<std::size_t N>
+	const array_type& get(const Coords<N>&,
+			      const Data<N, dtype>&,
+			      const CellMatIndex& cell_mat_index,
 			      const ValueIndex& value_index) const {
 		return values;
 	}

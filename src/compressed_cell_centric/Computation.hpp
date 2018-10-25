@@ -1,7 +1,10 @@
 #ifndef MM_COMPRESSED_CELL_COMPUTATION_HPP
 #define MM_COMPRESSED_CELL_COMPUTATION_HPP
 
+#include <type_traits>
+
 #include "IndexGenerator.hpp"
+#include "compressed_cell_centric/Arguments.hpp"
 #include "compressed_cell_centric/CompressedDataStructure.hpp"
 #include "compressed_cell_centric/Data.hpp"
 
@@ -25,17 +28,16 @@ public:
 		
 		while (index_generator.has_next()) {
 			const Coords<N> coords = index_generator.next();
-			// for (std::size_t mat_index = 0;
-			//      mat_index < data.get_mat_number();
-			//      ++mat_index) {
 			for (std::pair<CellMatIndex, ValueIndex> pair
 				     : data.cell_iteration(coords)) {
 				     const CellMatIndex& cell_mat_index
 					     = pair.first;
 				     const ValueIndex& value_index
 					     = pair.second;
-				     func(args.get(cell_mat_index,
-						   value_index)...);
+				     func(args.get(coords,
+						   data,
+						   cell_mat_index,
+				     		   value_index)...);
 			}
 		}
 	}

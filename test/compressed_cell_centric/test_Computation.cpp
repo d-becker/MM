@@ -5,9 +5,9 @@
 
 #include "gtest/gtest.h"
 
-#include "compressed_cell_centric/Computation.hpp"
-
+#include "MultidimArray.hpp"
 #include "compressed_cell_centric/Arguments.hpp"
+#include "compressed_cell_centric/Computation.hpp"
 
 namespace MM::compressed_cell_centric {
 
@@ -178,6 +178,71 @@ TEST_F(CompressedComputation, in_reduce) {
 			    REDUCE<CellData<2>>(sum, mass_by_cell));
 
 	check_mass_by_cell(mass_by_cell, density, volume);
+}
+
+TEST_F(CompressedComputation, neigh) {
+	const std::size_t cols = 4;
+	const std::size_t rows = 4;
+	const std::array<std::size_t, 2> size({cols, rows});
+	const std::vector<std::vector<std::size_t>> materials(cols * rows,
+							      {0});
+
+	Data<2> data(size, materials);
+
+	CellData<2> x = data.new_cell_data();
+	CellData<2> y = data.new_cell_data();
+
+	Stencil<2> s9pt({{1,1},  {1,0},  {1,-1},
+			 {0,1},  {0,0},  {0,-1},
+			 {-1,1}, {-1,0}, {-1,-1}});
+
+        for (std::size_t i = 0; i < cols; ++i) {
+		for (std::size_t j = 0; j < rows; ++j) {
+			const Coords<2> index(i, j);
+		        x.at(index) = 1;
+		}
+	}
+	
+	IndexGenerator<2> index_generator({1, 1}, {3, 3});
+	Computation<2> computation(data, index_generator);
+	
+	computation.compute([] (NeighProxy<CellData<2>> x,
+				double& y) {
+				    y =   x[{1,1}]  + x[{1,0}]  + x[{1,-1}]
+					+ x[{0,1}]  + x[{0,0}]  + x[{0,-1}]
+					+ x[{-1,1}] + x[{-1,0}] + x[{-1,-1}];
+			    },
+			    NEIGH<CellData<2>>(x, s9pt),
+			    OUT<CellData<2>>(y));
+
+	for (std::size_t i = 1; i < cols - 1; ++i) {
+		for (std::size_t j = 1; j < rows - 1; ++j) {
+			const Coords<2> index(i, j);
+			ASSERT_EQ(y.at(index), 9);
+		}
+	}
+	// FAIL() << "Unimplemented.";
+}
+
+TEST_F(CompressedComputation, index) {
+	CellData<2> cell_data = data.new_cell_data();
+
+	auto kernel = [] (const Coords<2> coords,
+			  double& value) {
+		value = multidim_index_to_raw(coords, {2, 2});
+	};
+
+	IndexGenerator<2> index_generator({0, 0}, {2, 2});
+	Computation<2> computation(data, index_generator);
+
+	computation.compute(kernel,
+			    INDEX<2>(),
+			    OUT<CellData<2>>(cell_data));
+
+	ASSERT_EQ(cell_data.at(Coords<2>(0u, 0u)), 0);
+	ASSERT_EQ(cell_data.at(Coords<2>(0u, 1u)), 2);
+	ASSERT_EQ(cell_data.at(Coords<2>(1u, 0u)), 1);
+	ASSERT_EQ(cell_data.at(Coords<2>(1u, 1u)), 3);
 }
 
 TEST_F(CompressedComputation, free_scalar) {
