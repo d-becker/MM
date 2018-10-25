@@ -34,7 +34,7 @@ dtype& unified_data_get(CellData<N, dtype> data,
 }
 
 template<std::size_t N, typename dtype>
-dtype& unified_data_get(MatData<N, dtype> data,
+dtype& unified_data_get(MatData<dtype> data,
 			const Coords<N>& cell_index,
 			const std::size_t mat_index) {
 	return data.at(mat_index);
@@ -55,11 +55,11 @@ public:
 	
 	IN(T p_data) : data(p_data)
 	{
-		constexpr std::size_t N = T::N;
+		// constexpr std::size_t N = T::N;
 		
-		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<N, dtype>>::value
-			      || std::is_same<T, CellMatData<N, dtype>>::value);
+		// static_assert(std::is_same<T, CellData<N, dtype>>::value
+		// 	      || std::is_same<T, MatData<dtype>>::value
+		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 	
 	const dtype& get(const Coords<T::N>& cell_index,
@@ -76,12 +76,12 @@ class OUT {
 public:
         OUT(T p_data) : data(p_data)
 	{
-		constexpr std::size_t N = T::N;
-		using dtype = typename T::dtype;
+		// constexpr std::size_t N = T::N;
+		// using dtype = typename T::dtype;
 		
-		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<N, dtype>>::value
-			      || std::is_same<T, CellMatData<N, dtype>>::value);
+		// static_assert(std::is_same<T, CellData<N, dtype>>::value
+		// 	      || std::is_same<T, MatData<dtype>>::value
+		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 	
 	typename T::dtype& get(const Coords<T::N>& cell_index,
@@ -121,11 +121,11 @@ public:
 		: reducer(p_reducer),
 		  data(p_data)
 	{
-		constexpr std::size_t N = T::N;
+		// constexpr std::size_t N = T::N;
 		
-		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<N, dtype>>::value
-			      || std::is_same<T, CellMatData<N, dtype>>::value);
+		// static_assert(std::is_same<T, CellData<N, dtype>>::value
+		// 	      || std::is_same<T, MatData<dtype>>::value
+		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 
 	ReduceProxy<typename T::dtype> get(const Coords<T::N>& cell_index,
@@ -198,11 +198,11 @@ public:
 	NEIGH(T p_data, const Stencil<T::N> p_stencil)
 		: data(p_data), stencil(p_stencil)
 	{
-		constexpr std::size_t N = T::N;
+		// constexpr std::size_t N = T::N;
 		
-		static_assert(std::is_same<T, CellData<N, dtype>>::value
-			      || std::is_same<T, MatData<N, dtype>>::value
-			      || std::is_same<T, CellMatData<N, dtype>>::value);
+		// static_assert(std::is_same<T, CellData<N, dtype>>::value
+		// 	      || std::is_same<T, MatData<dtype>>::value
+		// 	      || std::is_same<T, CellMatData<N, dtype>>::value);
 	}
 
 	NeighProxy<T>

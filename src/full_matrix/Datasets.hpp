@@ -60,10 +60,9 @@ private:
 	MultidimArray<N, dtype>& buffer;
 };
 
-template<std::size_t _N, typename _dtype = double>
+template<typename _dtype = double>
 class MatData {
 public:
-	constexpr static std::size_t N = _N;
 	using dtype = _dtype;
 	
 	MatData(std::vector<dtype>& p_material_data)
