@@ -57,6 +57,11 @@ extern void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int
 	CellData<2>& V, CellData<2>& x, CellData<2>& y,
 	MatData<>& n, CellData<2>& rho_ave);
 
+extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, Data<2> &d,
+	CellMatData<2>& rho, CellMatData<2>& rho_mat_ave, CellMatData<2>& p, CellMatData<2>& Vf, CellMatData<2>& t,
+	CellData<2>& V, CellData<2>& x, CellData<2>& y,
+	MatData<>& n, CellData<2>& rho_ave, vector<vector<size_t>> &mats);
+
 void initialise_field_rand(CellMatData<2>& rho, CellMatData<2>& t, CellMatData<2>& p, int Nmats, unsigned int sizex, unsigned int sizey, double prob2, double prob3, double prob4) {
 
   //let's use a morton space filling curve here
@@ -288,6 +293,7 @@ int main(int argc, char* argv[]) {
 	if (print_to_file==1)
 		FILE *f = fopen("map.txt","w");
 
+  std::vector<std::vector<std::size_t>> mats(sizex*sizey);
 	//Compute fractions and count cells
 	int cell_counts_by_mat[4] = {0,0,0,0};
   int mmc_cells = 0;
@@ -305,6 +311,14 @@ int main(int argc, char* argv[]) {
 			}
       if (count > 1) mmc_cells++;
 			cell_counts_by_mat[count-1]++;
+      mats[j*sizex+i].resize(count);
+      count = 0;
+			for (unsigned int mat = 0; mat < Nmats; mat++) {
+        if (rho.at(Coords<2>(i,j),mat)!=0.0) {
+          mats[j*sizex+i][count++] = mat;
+        }
+			}
+
 
 			if (print_to_file) {
 				if (i!=0) fprintf(f,", %d",count);
@@ -326,6 +340,7 @@ int main(int argc, char* argv[]) {
 
 
 	full_matrix_cell_centric(sizex, sizey, Nmats, data, rho, rho_mat_ave, p, Vf, t, V, x, y, n, rho_ave);
+  compact_matrix_cell_centric(sizex, sizey, Nmats, data, rho, rho_mat_ave, p, Vf, t, V, x, y, n, rho_ave, mats);
 	
 	return 0;
 }

@@ -19,7 +19,7 @@ using namespace MM::full_matrix;
 void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, Data<2> &data,
 	CellMatData<2>& rho, CellMatData<2>& rho_mat_ave, CellMatData<2>& p, CellMatData<2>& Vf, CellMatData<2>& t,
 	CellData<2>& V, CellData<2>& x, CellData<2>& y,
-	MatData<2>& n, CellData<2> &rho_ave)
+	MatData<>& n, CellData<2> &rho_ave)
 {
 	// Cell-centric algorithms
 	// Computational loop 1 - average density in cell
@@ -41,12 +41,13 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
 
 	// Computational loop 2 - Pressure for each cell and each material
   t1 = omp_get_wtime();
-  computation.compute([](double &p, double n, double rho, double t, double Vf) {
+  Computation<2> computation3(data, index_generator);
+  computation3.compute([](double &p, double n, double rho, double t, double Vf) {
       if (Vf > 0) p = (n * rho * t) / Vf;
       else p = 0;
       },
       OUT<CellMatData<2>>(p),
-      IN<MatData<2>>(n),
+      IN<MatData<>>(n),
       IN<CellMatData<2>>(rho),
       IN<CellMatData<2>>(t),
       IN<CellMatData<2>>(Vf));

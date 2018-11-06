@@ -187,7 +187,14 @@ public:
 	}
 
 	bool has_neigh(const Offsets<T::N>& offset) const {
-		return stencil.contains_offset(offset);
+		if (stencil.contains_offset(offset)) {
+      const Coords<T::N> neighbour_coords = cell_coords + offset;
+      if (std::is_same<T, CellData<T::N, dtype>>::value) {
+			  return true;;
+		} else {
+			return has_neigh_cell_mat_data(neighbour_coords);
+		}
+    } else return false;
 	}
 
 	const dtype& get_neigh(const Offsets<T::N>& offset) const {
@@ -238,7 +245,21 @@ private:
 
 		throw "Material not found.";
 	}
-	
+
+  bool
+	has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
+		for (const std::pair<CellMatIndex, ValueIndex> pair
+			     : data.cell_iteration(neighbour_coords)) {
+			const CellMatIndex& n_cell_mat_index = pair.first;
+			if (n_cell_mat_index.mat_index
+			    == cell_mat_index.mat_index) {
+				const ValueIndex& n_value_index = pair.second;
+				return true;
+			}
+		}
+    return false;
+	}
+
 	const Data<T::N, dtype>& data;
 	const Coords<T::N> cell_coords;
 	const CellMatIndex& cell_mat_index;
