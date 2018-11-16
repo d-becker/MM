@@ -55,7 +55,13 @@ public:
 	dtype& at_raw_index(const std::size_t index) {
 		return buffer.at_raw_index(index);
 	}
-	
+
+  std::vector<dtype*> get_raw(std::array<std::size_t, N> &shape) {
+    shape = buffer.get_size();
+    std::vector<dtype*> arr = {&buffer.at_raw_index(0)};
+    return arr;
+  }
+
 private:
 	MultidimArray<N, dtype>& buffer;
 };
@@ -64,6 +70,7 @@ template<typename _dtype = double>
 class MatData {
 public:
 	using dtype = _dtype;
+	constexpr static std::size_t N = 1;
 	
 	MatData(std::vector<dtype>& p_material_data)
 	        : material_data(p_material_data)
@@ -89,7 +96,14 @@ public:
 	dtype& at(const std::size_t index) {
 		return material_data.at(index);
 	}
-	
+
+  std::vector<dtype*> get_raw(std::array<std::size_t,N> &shape) {
+    std::array<std::size_t,1> _shape = {material_data.size()};
+    shape = _shape;
+    std::vector<dtype*> arr = {&material_data[0]};
+    return arr;
+  }
+
 private:
 	std::vector<dtype>& material_data;
 };
@@ -128,6 +142,15 @@ public:
 		  const std::size_t mat_index) {
 		return data.at(mat_index).at(cell_index);
 	}
+
+
+  std::vector<dtype*> get_raw(std::array<std::size_t, N> &shape) {
+    shape = data.at(0).get_size();
+    std::vector<dtype*> arr(data.size());
+    for (size_t i = 0; i < data.size(); i++)
+      arr[i] = &(data[i].at_raw_index(0)); 
+    return arr;
+  }
 	
 private:
 	std::vector<MultidimArray<N, dtype>>& data;

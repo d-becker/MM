@@ -103,6 +103,8 @@ def mm_gen_mpi(master, date, kernels):
 ##########################################################################
     code('#include <iostream>\n#include "full_matrix/Computation.hpp"\n#include "Arguments.hpp"\n#include "Data.hpp"\n#include "IndexGenerator.hpp"\n\nusing namespace MM;\nusing namespace MM::full_matrix;')
     code('')
+    code('#define NeighProxy NeighProxyDirect')
+    code('')
     comm('user function')
     pos = lam.find('(')
     code('inline void '+name+lam[pos:])
@@ -134,10 +136,23 @@ def mm_gen_mpi(master, date, kernels):
     code('const std::array<std::size_t, '+str(dim)+'> &begin = computation.index_generator.get_begin();')
     code('const std::array<std::size_t, '+str(dim)+'> &end = computation.index_generator.get_end();')
 
+    for n in range(0,nargs):
+        if arg_type[n] == 'arg_dat':
+            code('std::array<std::size_t,'+str(dims[n])+'> shape'+str(n)+';')
+            code('std::vector<double *> data'+str(n)+' = arg'+str(n)+'.get_raw(shape'+str(n)+');')
+
+    if 'Mat' in space:
+        FOR('std::size_t mat_index = 0; mat_index < computation.data.get_mat_number(); mat_index++')
+    else:
+        code('std::size_t mat_index = 0;')
+
     if 'Cell' in space:
       line = ''
+      code('#pragma omp parallel for collapse('+str(dim-1)+')')
       for d2 in range(0,dim):
         d = dim-d2-1
+        if d2 == dim-1:
+            code('#pragma omp simd')
         FOR('std::size_t '+space_counters[d]+' = begin['+str(d)+']; '+space_counters[d]+' < end['+str(d)+']; '+space_counters[d]+'++')
         line = space_counters[d]+', '+line
     else:
@@ -146,23 +161,31 @@ def mm_gen_mpi(master, date, kernels):
         line = line + '0, '
     code('const Coords<'+str(dim)+'> coords('+line[:-2]+');')
 
-    if 'Mat' in space:
-        FOR('std::size_t mat_index = 0; mat_index < computation.data.get_mat_number(); mat_index++')
-    else:
-        code('std::size_t mat_index = 0;')
 
     #
     # Function call
     #
-    line = name + '(arg0.get(coords, mat_index),\n'
-    for arg in range(1,nargs):
-        line = line + config.depth*' ' + '  arg'+str(arg)+'.get(coords, mat_index),\n'
+    line = name + '(\n'
+    for arg in range(0,nargs):
+        var = ''
+        if arg_type[arg] == 'arg_dat':
+            if 'CellData' == spaces[arg]:
+              var = 'data'+str(arg)+'[0][i+j*shape'+str(arg)+'[0]]'
+            elif 'MatData' == spaces[arg]:
+              var = 'data'+str(arg)+'[0][mat_index]'
+            else:
+              var = 'data'+str(arg)+'[mat_index][i+j*shape'+str(arg)+'[0]]'
+            if arg_type2[arg] == 'NEIGH':
+              var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(shape'+str(arg)+', &'+var+')'
+        else:
+          var = 'arg'+str(arg)+'.get(coords, mat_index)'
+        line = line + config.depth*' ' + '  ' + var + ',\n'
     code(line[:-2]+');')
 
-    if 'Mat' in space:
-        ENDFOR()
     if 'Cell' in space:
       for d2 in range(0,dim):
+        ENDFOR()
+    if 'Mat' in space:
         ENDFOR()
 
     config.depth = 0

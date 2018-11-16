@@ -128,8 +128,8 @@ def get_arg_space(arg_string):
 
 def get_arg_dim(arg_string):
     i = re.search('<([0-9])>', arg_string)
-    if i is None:
-        print 'error, could not determin dim: ' + arg_string
+    if not i:
+        return 1
     return i.group(1)
 
 def get_arg_neigh(arg_string):

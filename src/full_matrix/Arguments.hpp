@@ -66,6 +66,10 @@ public:
 			 const std::size_t mat_index) {
 		return unified_data_get(data, cell_index, mat_index);
 	}
+
+  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+    return data.get_raw(shape);
+  }
 	
 private:
 	T data;
@@ -88,6 +92,10 @@ public:
 			       const std::size_t mat_index) {
 		return unified_data_get(data, cell_index, mat_index);
 	}
+
+  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+    return data.get_raw(shape);
+  }
 	
 private:
 	T data;
@@ -134,8 +142,12 @@ public:
 		return ReduceProxy<dtype>(value, reducer);
 	}
 
+  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+    return data.get_raw(shape);
+  }
+
 private:
-	std::function<dtype(dtype, dtype)> reducer; // A commutative and associative function.
+  std::function<dtype(dtype, dtype)> reducer; // A commutative and associative function.
 	T data;
 };
 
@@ -190,6 +202,18 @@ private:
 	const Stencil<T::N> stencil;	
 };
 
+template <class T>
+class NeighProxyDirect {
+  public:
+  NeighProxyDirect(std::array<std::size_t, T::N> _shape, const typename T::dtype * __restrict__ _ptr) : shape(_shape), ptr(_ptr) {}
+  const typename T::dtype& operator[](const std::array<int, T::N> offsets) const {
+   return ptr[offsets[0] + offsets[1]*shape[0]];
+  }
+  private:
+    std::array<std::size_t, T::N> shape;
+    const typename T::dtype * __restrict__ ptr;
+};
+
 template<typename T>
 class NEIGH {
 public:	
@@ -213,6 +237,9 @@ public:
 				     stencil);
 	}
 
+  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+    return data.get_raw(shape);
+  }
 private:
 	T data;
 	const Stencil<T::N> stencil;
