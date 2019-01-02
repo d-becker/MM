@@ -34,7 +34,7 @@ dtype& unified_data_get(CellData<N, dtype> data,
 }
 
 template<std::size_t N, typename dtype>
-dtype& unified_data_get(MatData<dtype> data,
+dtype& unified_data_get(MatData<N, dtype> data,
 			const Coords<N>& cell_index,
 			const std::size_t mat_index) {
 	return data.at(mat_index);

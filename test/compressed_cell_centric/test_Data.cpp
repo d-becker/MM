@@ -50,8 +50,9 @@ TEST(CompressedData, new_mat_data) {
 	const std::vector<std::vector<std::size_t>> arr
 		= get_raw_data(cell_no, mat_no);
 
-	Data<2> data({2, 2}, arr);
-	MatData<double> mat_data = data.new_mat_data();
+	constexpr std::size_t N = 2;
+	Data<N> data({2, 2}, arr);
+	MatData<N, double> mat_data = data.new_mat_data();
 	ASSERT_EQ(mat_data.get_size(), data.get_mat_number());
 }
 

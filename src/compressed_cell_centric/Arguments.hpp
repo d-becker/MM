@@ -24,8 +24,8 @@ dtype& unified_data_get(CellData<N, dtype> data,
 	return data.at_raw_index(cell_mat_index.cell_index);
 }
 
-template<typename dtype>
-dtype& unified_data_get(MatData<dtype> data,
+template<std::size_t N, typename dtype>
+dtype& unified_data_get(MatData<N, dtype> data,
 		        const CellMatIndex& cell_mat_index,
 			const ValueIndex& _value_index) {
 	return data.at(cell_mat_index.mat_index);
@@ -246,18 +246,17 @@ private:
 		throw "Material not found.";
 	}
 
-  bool
-	has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
+  bool has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
 		for (const std::pair<CellMatIndex, ValueIndex> pair
 			     : data.cell_iteration(neighbour_coords)) {
 			const CellMatIndex& n_cell_mat_index = pair.first;
 			if (n_cell_mat_index.mat_index
 			    == cell_mat_index.mat_index) {
-				const ValueIndex& n_value_index = pair.second;
 				return true;
 			}
 		}
-    return false;
+
+		return false;
 	}
 
 	const Data<T::N, dtype>& data;

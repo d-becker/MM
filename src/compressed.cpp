@@ -17,7 +17,7 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
 	MM::full_matrix::CellMatData<2>& f_rho, MM::full_matrix::CellMatData<2>& f_rho_mat_ave,
   MM::full_matrix::CellMatData<2>& f_p, MM::full_matrix::CellMatData<2>& f_Vf, MM::full_matrix::CellMatData<2>& f_t,
 	MM::full_matrix::CellData<2>& f_V, MM::full_matrix::CellData<2>& f_x, MM::full_matrix::CellData<2>& f_y,
-	MM::full_matrix::MatData<>& f_n, MM::full_matrix::CellData<2>& f_rho_ave, vector<vector<size_t>> &mats)
+	MM::full_matrix::MatData<2>& f_n, MM::full_matrix::CellData<2>& f_rho_ave, vector<vector<size_t>> &mats)
 {
   Data<2> data({sizex, sizey}, mats);
 
@@ -32,7 +32,7 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
   CellData<2> y = data.new_cell_data();
   CellData<2> rho_ave = data.new_cell_data();
 
-  MatData<> n = data.new_mat_data();
+  MatData<2> n = data.new_mat_data();
 
   size_t compact_idx = 0;
   for (size_t j = 0; j <  sizey; j++) {
@@ -87,7 +87,7 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
       else p = 0;
       },
       OUT<CellMatData<2>>(p),
-      IN<MatData<>>(n),
+      IN<MatData<2>>(n),
       IN<CellMatData<2>>(rho),
       IN<CellMatData<2>>(t),
       IN<CellMatData<2>>(Vf));

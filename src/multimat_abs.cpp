@@ -55,12 +55,12 @@ using namespace MM::full_matrix;
 extern void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, Data<2> &d,
 	CellMatData<2>& rho, CellMatData<2>& rho_mat_ave, CellMatData<2>& p, CellMatData<2>& Vf, CellMatData<2>& t,
 	CellData<2>& V, CellData<2>& x, CellData<2>& y,
-	MatData<>& n, CellData<2>& rho_ave);
+	MatData<2>& n, CellData<2>& rho_ave);
 
 extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, Data<2> &d,
 	CellMatData<2>& rho, CellMatData<2>& rho_mat_ave, CellMatData<2>& p, CellMatData<2>& Vf, CellMatData<2>& t,
 	CellData<2>& V, CellData<2>& x, CellData<2>& y,
-	MatData<>& n, CellData<2>& rho_ave, vector<vector<size_t>> &mats);
+	MatData<2>& n, CellData<2>& rho_ave, vector<vector<size_t>> &mats);
 
 void initialise_field_rand(CellMatData<2>& rho, CellMatData<2>& t, CellMatData<2>& p, int Nmats, unsigned int sizex, unsigned int sizey, double prob2, double prob3, double prob4) {
 
@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
 	CellData<2> y = data.new_cell_data();
 
 	//Allocate per-material only datasets
-	MatData<> n = data.new_mat_data(); // number of mats
+	MatData<2> n = data.new_mat_data(); // number of mats
 
 	//Allocate output datasets
 	CellData<2> rho_ave = data.new_cell_data();

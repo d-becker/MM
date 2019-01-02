@@ -37,9 +37,10 @@ TEST(test_IN, mat_data) {
 	std::vector<double> arr(4, 0.0);
 	const double value = 2.4;
 	arr.at(1) = value;
-	
-	const MatData<> mat_data(arr);
-	const IN<MatData<>> in(mat_data);
+
+	constexpr std::size_t N = 2;
+	const MatData<N> mat_data(arr);
+	const IN<MatData<N>> in(mat_data);
 
 	const CellMatIndex cell_mat_index(0, 1);
 	const ValueIndex value_index(ValueIndex::Type::SINGLE_MAT, 0);
@@ -83,9 +84,10 @@ TEST(test_OUT, cell_data) {
 
 TEST(test_OUT, mat_data) {
 	std::vector<double> arr(4, 0.0);
-	
-	const MatData<> mat_data(arr);
-	OUT<MatData<>> out(mat_data);
+
+	constexpr std::size_t N = 2;
+	const MatData<N> mat_data(arr);
+	OUT<MatData<N>> out(mat_data);
 
 	const double value = 2.4;
         const std::size_t mat_index = 1;
@@ -136,11 +138,12 @@ TEST(test_REDUCE, cell_data) {
 }
 
 TEST(test_REDUCE, mat_data) {
+	constexpr std::size_t N = 2;
 	std::vector<double> arr(4, 0.0);
-	const MatData<> mat_data(arr);
+	const MatData<N> mat_data(arr);
 	
 	auto reducer = [](const double a, const double b) {return a + b;};
-	REDUCE<MatData<>> reduce(reducer, mat_data);
+	REDUCE<MatData<N>> reduce(reducer, mat_data);
 
 	const double value1 = 2.4;
 	const double value2 = 8.2;
