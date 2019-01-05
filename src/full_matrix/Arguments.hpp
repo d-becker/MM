@@ -28,7 +28,7 @@ void fit_index_to_reduced_data(Coords<N>& index,
 template<std::size_t N, typename dtype>
 dtype& unified_data_get(CellData<N, dtype> data,
 			Coords<N> cell_index,
-			const std::size_t mat_index) {
+			const std::size_t /* mat_index */) {
 	fit_index_to_reduced_data(cell_index, data.get_size());
 	return data.at(cell_index);
 }
@@ -251,7 +251,7 @@ public:
 	INDEX() {};
 
 	Coords<N>
-	get(const Coords<N>& cell_index, const std::size_t mat_index) {
+	get(const Coords<N>& cell_index, const std::size_t /* mat_index */) {
 		return cell_index;
 	}
 };
@@ -266,8 +266,8 @@ public:
 	}
 
 	template<std::size_t N>
-	const dtype& get(const Coords<N>& cell_index,
-			 const std::size_t mat_index) const {
+	const dtype& get(const Coords<N>& /* cell_index */,
+			 const std::size_t /* mat_index */) const {
 		return value;
 	}
 private:

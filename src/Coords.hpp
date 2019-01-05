@@ -11,9 +11,11 @@ namespace MM {
 template <typename dtype, std::size_t N>
 class VecN {
 public:
-	VecN(std::array<dtype, N> p_coordinates)
-		: coordinates(p_coordinates)
+	static VecN from_array(std::array<dtype, N> p_coordinates)
 	{
+		VecN res;
+		res.coordinates = p_coordinates;
+		return res;
 	}
 
 	template <typename ...Coordinates>
@@ -43,6 +45,8 @@ public:
 		return this->coordinates == other.coordinates;
 	}
 private:
+	VecN() = default;
+
 	std::array<dtype, N> coordinates;
 };
 
@@ -61,7 +65,7 @@ Coords<N> operator+(const Coords<N>& coords, const Offsets<N>& offsets) {
 		c[i] = coords[i] + offsets[i];
 	}
 
-	return Coords<N>(c);
+	return Coords<N>::from_array(c);
 }
 
 } // namespace MM

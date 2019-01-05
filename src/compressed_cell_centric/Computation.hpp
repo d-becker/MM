@@ -27,7 +27,8 @@ public:
 		// TODO: check all args belong to this->data.
 		
 		while (index_generator.has_next()) {
-			const Coords<N> coords = index_generator.next();
+			const Coords<N> coords
+				= Coords<N>::from_array(index_generator.next());
 			for (std::pair<CellMatIndex, ValueIndex> pair
 				     : data.cell_iteration(coords)) {
 				     const CellMatIndex& cell_mat_index

@@ -1,6 +1,7 @@
 #ifndef MM_DATA_HPP
 #define MM_DATA_HPP
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <list>
@@ -70,9 +71,14 @@ public:
 	CellMatData<N, dtype>
 	new_cell_mat_data(const std::array<std::size_t, N>& arr_size) {
 		throw_on_zero_size(arr_size);
-		cell_mat_buffers.emplace_back(
-			mat_number,
-			MultidimArray<N, dtype>(arr_size));
+
+		std::array<std::size_t, N + 1> extended_arr_size;
+		std::copy(arr_size.begin(),
+			  arr_size.end(),
+			  extended_arr_size.begin());
+		extended_arr_size[N] = mat_number;
+
+		cell_mat_buffers.emplace_back(extended_arr_size);
 		
 		return CellMatData<N, dtype>(cell_mat_buffers.back());
 	}
@@ -92,7 +98,7 @@ private:
 	
 	std::list<MultidimArray<N, dtype>> cell_buffers;
 	std::list<std::vector<dtype>> mat_buffers;
-	std::list<std::vector<MultidimArray<N, dtype>>> cell_mat_buffers;
+	std::list<MultidimArray<N + 1, dtype>> cell_mat_buffers;
 };
 
 } // namespace full_matrix

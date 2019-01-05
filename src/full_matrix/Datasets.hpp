@@ -1,6 +1,7 @@
 #ifndef MM_DATASETS_HPP
 #define MM_DATASETS_HPP
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <list>
@@ -114,47 +115,73 @@ public:
 	constexpr static std::size_t N = _N;
 	using dtype = _dtype;
 	
-	CellMatData(std::vector<MultidimArray<N, dtype>>& p_data)
-		: data(p_data)
+	CellMatData(MultidimArray<N + 1, dtype>& p_data)
+		: data(p_data),
+		  size_without_mat_dimension(
+			  cut_last_dimension(p_data.get_size()))
 	{
 	}
 
 	const std::array<std::size_t, N>& get_size() const {
-		return data.at(0).get_size();
+		return size_without_mat_dimension;
 	}
 
 	const dtype& get_unchecked(const Coords<N> cell_index,
 				   const std::size_t mat_index) const {
-		return data[mat_index][cell_index];
+		return data[extend_coords(cell_index, mat_index)];
 	}
 
 	dtype& get_unchecked(const Coords<N> cell_index,
 			     const std::size_t mat_index) {
-		return data[mat_index][cell_index];
+		return data[extend_coords(cell_index, mat_index)];
 	}
 
 	const dtype& at(const Coords<N> cell_index,
 			const std::size_t mat_index) const {
-		return data.at(mat_index).at(cell_index);
+		return data.at(extend_coords(cell_index, mat_index));
 	}
 
 	dtype& at(const Coords<N> cell_index,
 		  const std::size_t mat_index) {
-		return data.at(mat_index).at(cell_index);
+		return data.at(extend_coords(cell_index, mat_index));
 	}
 
 
-  std::vector<dtype*> get_raw(std::array<std::size_t, N> &shape) {
-    shape = data.at(0).get_size();
-    std::vector<dtype*> arr(data.size());
-    for (size_t i = 0; i < data.size(); i++)
-      arr[i] = &(data[i].at_raw_index(0)); 
-    return arr;
-  }
+	// TODO
+	// std::vector<dtype*> get_raw(std::array<std::size_t, N> &shape) {
+	// 	shape = data.at(0).get_size();
+	// 	std::vector<dtype*> arr(data.size());
+	// 	for (size_t i = 0; i < data.size(); i++)
+	// 		arr[i] = &(data[i].at_raw_index(0));
+	// 	return arr;
+	// }
 	
 private:
-	std::vector<MultidimArray<N, dtype>>& data;
+	static std::array<std::size_t, N>
+	cut_last_dimension(const std::array<std::size_t, N + 1>& arr) {
+		std::array<std::size_t, N> res;
+		std::copy(arr.begin(), arr.end() - 1, res.begin());
+
+		return res;
+	}
+
+	static Coords<N + 1>
+	extend_coords(const Coords<N> coords, const std::size_t mat_index) {
+		std::array<std::size_t, N + 1> arr;
+
+		for (std::size_t i = 0; i < N; ++i) {
+			arr[i] = coords[i];
+		}
+
+		arr[N] = mat_index;
+
+		return Coords<N + 1>::from_array(arr);
+	}
 	
+	// The last dimension is the material.
+	MultidimArray<N + 1, dtype>& data;
+
+	std::array<std::size_t, N> size_without_mat_dimension;
 };
 
 } // namespace full_matrix

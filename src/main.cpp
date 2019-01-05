@@ -1,7 +1,6 @@
 #include <cmath>
 #include <iostream>
 
-
 #include "IndexGenerator.hpp"
 #include "compressed_cell_centric/CompressedDataStructure.hpp"
 #include "full_matrix/Arguments.hpp"
