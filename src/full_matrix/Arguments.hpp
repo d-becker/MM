@@ -67,7 +67,7 @@ public:
 		return unified_data_get(data, cell_index, mat_index);
 	}
 
-  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+  typename T::dtype *get_raw(std::array<size_t, T::N> &shape) {
     return data.get_raw(shape);
   }
 	
@@ -93,7 +93,7 @@ public:
 		return unified_data_get(data, cell_index, mat_index);
 	}
 
-  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+  typename T::dtype *get_raw(std::array<size_t, T::N> &shape) {
     return data.get_raw(shape);
   }
 	
@@ -142,7 +142,7 @@ public:
 		return ReduceProxy<dtype>(value, reducer);
 	}
 
-  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+  typename T::dtype * get_raw(std::array<size_t, T::N> &shape) {
     return data.get_raw(shape);
   }
 
@@ -237,7 +237,7 @@ public:
 				     stencil);
 	}
 
-  std::vector<typename T::dtype *> get_raw(std::array<size_t, T::N> &shape) {
+  typename T::dtype * get_raw(std::array<size_t, T::N> &shape) {
     return data.get_raw(shape);
   }
 private:

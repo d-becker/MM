@@ -9,11 +9,10 @@
 
 #include "Arguments.hpp"
 #include "Computation.hpp"
+#include "Coords.hpp"
 #include "Data.hpp"
 #include "Datasets.hpp"
 #include "IndexGenerator.hpp"
-
-#include "CompressedDataStructure.hpp"
 
 using namespace std;
 using namespace MM;
@@ -22,20 +21,20 @@ using namespace MM::full_matrix;
 // mm_par_loop declarations
 //
 
-void mm_par_loop_anonymusAt863(std::string, Computation<2>&,
+void mm_par_loop_anonymusAt846(std::string, Computation<2>&,
   IN<CellMatData<2>>,
   IN<CellMatData<2>>,
   IN<CellData<2>>,
   REDUCE<CellData<2>>);
 
-void mm_par_loop_anonymusAt1275(std::string, Computation<2>&,
+void mm_par_loop_anonymusAt1258(std::string, Computation<2>&,
   OUT<CellMatData<2>>,
-  IN<MatData<>>,
+  IN<MatData<2>>,
   IN<CellMatData<2>>,
   IN<CellMatData<2>>,
   IN<CellMatData<2>>);
 
-void mm_par_loop_anonymusAt1901(std::string, Computation<2>&,
+void mm_par_loop_anonymusAt1885(std::string, Computation<2>&,
   NEIGH<CellData<2>>,
   NEIGH<CellData<2>>,
   NEIGH<CellMatData<2>>,
@@ -45,7 +44,7 @@ void mm_par_loop_anonymusAt1901(std::string, Computation<2>&,
 void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, Data<2> &data,
 	CellMatData<2>& rho, CellMatData<2>& rho_mat_ave, CellMatData<2>& p, CellMatData<2>& Vf, CellMatData<2>& t,
 	CellData<2>& V, CellData<2>& x, CellData<2>& y,
-	MatData<>& n, CellData<2> &rho_ave)
+	MatData<2>& n, CellData<2> &rho_ave)
 {
 
 
@@ -55,7 +54,7 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
   };
   IndexGenerator<2> index_generator({0, 0}, {sizex, sizey});
   Computation<2> computation(data, index_generator);
-  mm_par_loop_anonymusAt863("anonymusAt863", computation,
+  mm_par_loop_anonymusAt846("anonymusAt846", computation,
               IN<CellMatData<2>>(rho),
               IN<CellMatData<2>>(Vf),
               IN<CellData<2>>(V),
@@ -65,9 +64,9 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
 
   t1 = omp_get_wtime();
   Computation<2> computation3(data, index_generator);
-  mm_par_loop_anonymusAt1275("anonymusAt1275", computation3,
+  mm_par_loop_anonymusAt1258("anonymusAt1258", computation3,
               OUT<CellMatData<2>>(p),
-              IN<MatData<>>(n),
+              IN<MatData<2>>(n),
               IN<CellMatData<2>>(rho),
               IN<CellMatData<2>>(t),
               IN<CellMatData<2>>(Vf));;
@@ -79,7 +78,7 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
        {-1,1}, {-1,0}, {-1,-1}});
   IndexGenerator<2> index_generator2({1, 1}, {sizex-1, sizey-1});
   Computation<2> computation2(data, index_generator2);
-  mm_par_loop_anonymusAt1901("anonymusAt1901", computation2,
+  mm_par_loop_anonymusAt1885("anonymusAt1885", computation2,
               NEIGH<CellData<2>>(x, s9pt),
               NEIGH<CellData<2>>(y, s9pt),
               NEIGH<CellMatData<2>>(Vf, s9pt),

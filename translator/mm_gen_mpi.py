@@ -139,7 +139,7 @@ def mm_gen_mpi(master, date, kernels):
     for n in range(0,nargs):
         if arg_type[n] == 'arg_dat':
             code('std::array<std::size_t,'+str(dims[n])+'> shape'+str(n)+';')
-            code('std::vector<double *> data'+str(n)+' = arg'+str(n)+'.get_raw(shape'+str(n)+');')
+            code('double * __restrict data'+str(n)+' = arg'+str(n)+'.get_raw(shape'+str(n)+');')
 
     if 'Mat' in space:
         FOR('std::size_t mat_index = 0; mat_index < computation.data.get_mat_number(); mat_index++')
@@ -170,11 +170,11 @@ def mm_gen_mpi(master, date, kernels):
         var = ''
         if arg_type[arg] == 'arg_dat':
             if 'CellData' == spaces[arg]:
-              var = 'data'+str(arg)+'[0][i+j*shape'+str(arg)+'[0]]'
+              var = 'data'+str(arg)+'[i+j*shape'+str(arg)+'[0]]'
             elif 'MatData' == spaces[arg]:
-              var = 'data'+str(arg)+'[0][mat_index]'
+              var = 'data'+str(arg)+'[mat_index]'
             else:
-              var = 'data'+str(arg)+'[mat_index][i+j*shape'+str(arg)+'[0]]'
+              var = 'data'+str(arg)+'[i+j*shape'+str(arg)+'[0]+mat_index*shape'+str(arg)+'[0]*shape'+str(arg)+'[1]]'
             if arg_type2[arg] == 'NEIGH':
               var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(shape'+str(arg)+', &'+var+')'
         else:

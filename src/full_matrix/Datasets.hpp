@@ -57,10 +57,9 @@ public:
 		return buffer.at_raw_index(index);
 	}
 
-  std::vector<dtype*> get_raw(std::array<std::size_t, N> &shape) {
+  dtype* get_raw(std::array<std::size_t, N> &shape) {
     shape = buffer.get_size();
-    std::vector<dtype*> arr = {&buffer.at_raw_index(0)};
-    return arr;
+    return &buffer.at_raw_index(0);
   }
 
 private:
@@ -98,11 +97,10 @@ public:
 		return material_data.at(index);
 	}
 
-  std::vector<dtype*> get_raw(std::array<std::size_t,N> &shape) {
-    std::array<std::size_t,1> _shape = {material_data.size()};
+  dtype* get_raw(std::array<std::size_t,N> &shape) {
+    std::array<std::size_t,N> _shape = {material_data.size()};
     shape = _shape;
-    std::vector<dtype*> arr = {&material_data[0]};
-    return arr;
+    return &material_data[0];
   }
 
 private:
@@ -146,16 +144,11 @@ public:
 		return data.at(extend_coords(cell_index, mat_index));
 	}
 
+  dtype* get_raw(std::array<std::size_t, N> &shape) {
+    shape = size_without_mat_dimension;
+    return &data.at_raw_index(0);
+  }
 
-	// TODO
-	// std::vector<dtype*> get_raw(std::array<std::size_t, N> &shape) {
-	// 	shape = data.at(0).get_size();
-	// 	std::vector<dtype*> arr(data.size());
-	// 	for (size_t i = 0; i < data.size(); i++)
-	// 		arr[i] = &(data[i].at_raw_index(0));
-	// 	return arr;
-	// }
-	
 private:
 	static std::array<std::size_t, N>
 	cut_last_dimension(const std::array<std::size_t, N + 1>& arr) {
