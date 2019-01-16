@@ -57,10 +57,14 @@ public:
 		return buffer.at_raw_index(index);
 	}
 
-  dtype* get_raw(std::array<std::size_t, N> &shape) {
-    shape = buffer.get_size();
-    return &buffer.at_raw_index(0);
-  }
+	dtype* get_raw(std::array<std::size_t, N> &shape) {
+		shape = buffer.get_size();
+		return &buffer.at_raw_index(0);
+	}
+
+	dtype* get_raw() {
+		return &buffer.at_raw_index(0);
+	}
 
 private:
 	MultidimArray<N, dtype>& buffer;
@@ -97,11 +101,15 @@ public:
 		return material_data.at(index);
 	}
 
-  dtype* get_raw(std::array<std::size_t,N> &shape) {
-    std::array<std::size_t,N> _shape = {material_data.size()};
-    shape = _shape;
-    return &material_data[0];
-  }
+	dtype* get_raw(std::array<std::size_t,N> &shape) {
+		std::array<std::size_t,N> _shape = {material_data.size()};
+		shape = _shape;
+		return &material_data[0];
+	}
+
+	dtype* get_raw() {
+		return &material_data[0];
+	}
 
 private:
 	std::vector<dtype>& material_data;

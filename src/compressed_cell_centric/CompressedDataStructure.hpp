@@ -193,7 +193,7 @@ public:
 	std::size_t mixed_storage_size() const {
 		return mixed_storage.size();
 	}
-private:
+//private:
 	void handle_cell(std::size_t cell_index,
 			 const std::vector<std::size_t>& materials_in_cell) {
 		structure[cell_index].nmats = materials_in_cell.size();

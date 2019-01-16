@@ -63,6 +63,7 @@ import datetime
 import util
 
 from mm_gen_mpi import mm_gen_mpi
+from mm_gen_mpi_compact import mm_gen_mpi_compact
 
 arithmetic_regex_pattern = r'^[ \(\)\+\-\*\\\.\%0-9]+$'
 
@@ -562,8 +563,10 @@ def main(source_files):
   # finally, generate target-specific kernel files
   #
 
-
-  mm_gen_mpi(str(source_files[0]), date, kernels)
+  if 'using namespace MM::compressed_cell_centric' in text:
+    mm_gen_mpi_compact(str(source_files[0]), date, kernels)
+  else:
+    mm_gen_mpi(str(source_files[0]), date, kernels)
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

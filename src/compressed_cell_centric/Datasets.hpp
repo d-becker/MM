@@ -55,6 +55,14 @@ public:
 	std::size_t mixed_storage_size() const {
 		return mixed_storage_values.size();
 	}
+
+	dtype* get_raw() {
+    	return &cell_values[0];
+  	}
+
+  	dtype* get_raw_list() {
+    	return &mixed_storage_values[0];
+  	}
 private:
 	// const std::array<std::size_t, N>& size;
 	// const CompressedDataStructure& structure;

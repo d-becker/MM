@@ -64,6 +64,14 @@ public:
 			 const ValueIndex& value_index) const {
 		return unified_data_get(data, cell_mat_index, value_index);
 	}
+
+	typename T::dtype *get_raw() {
+    	return data.get_raw();
+  	}
+  	typename T::dtype *get_raw_list() {
+    	return data.get_raw_list();
+  	}
+
 	
 private:
 	T data;
@@ -93,6 +101,13 @@ public:
 		return unified_data_get(data, cell_mat_index, value_index);
 	}
 	
+	typename T::dtype *get_raw() {
+    	return data.get_raw();
+  	}
+  	typename T::dtype *get_raw_list() {
+    	return data.get_raw_list();
+  	}
+
 private:
 	T data;
 };
@@ -296,7 +311,15 @@ public:
 				     stencil);
 	}
 
-private:
+	dtype* get_raw() {
+    	return dataset.get_raw();
+  	}
+
+  	dtype* get_raw_list() {
+    	return dataset.get_raw_list();
+  	}
+
+//private:
 	T dataset;
 	const Stencil<T::N> stencil;
 };

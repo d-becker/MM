@@ -43,7 +43,7 @@ public:
 		}
 	}
 
-private:
+//private:
 	Data<N, dtype>& data;
 	IndexGenerator<N> index_generator;
 };

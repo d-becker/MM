@@ -64,7 +64,7 @@ public:
 		return structure.cell_iteration(flat_index);
 	}
 
-private:
+//private:
 	static
 	std::size_t count_materials(
 		const std::vector<std::vector<std::size_t>>& materials) {

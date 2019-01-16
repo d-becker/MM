@@ -79,7 +79,8 @@ def ELSEIF(line):
   config.depth += 2
 
 def ELSE():
-  code('else {')
+  config.depth -= 2
+  code('} else {')
   config.depth += 2
 
 def ENDIF():
