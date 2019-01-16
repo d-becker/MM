@@ -48,7 +48,7 @@ void mm_par_loop_anonymusAt3201(std::string name, Computation<2> &computation,
           data4[i+j*shape[0]]);
       } else {
         for (std::size_t structure_index = structure.structure[i+j*shape[0]].imat; 
-            structure_index>=0; structure_index = structure.mixed_storage[structure_index].nextfrac) {
+            structure_index!=-1ul; structure_index = structure.mixed_storage[structure_index].nextfrac) {
           std::size_t mat_index = structure.mixed_storage[structure_index].material;
           anonymusAt3201(
             data0_list[structure_index],

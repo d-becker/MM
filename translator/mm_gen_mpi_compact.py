@@ -184,7 +184,7 @@ def mm_gen_mpi_compact(master, date, kernels):
       code(line[:-2]+');')
       ELSE()
       FOR('std::size_t structure_index = structure.structure[i+j*shape[0]].imat; \n\
-            structure_index>=0; structure_index = structure.mixed_storage[structure_index].nextfrac')
+            structure_index!=-1ul; structure_index = structure.mixed_storage[structure_index].nextfrac')
       code('std::size_t mat_index = structure.mixed_storage[structure_index].material;')
       #
       # Function call
