@@ -9,6 +9,7 @@
 using namespace MM;
 using namespace MM::compressed_cell_centric;
 
+#define NeighProxy NeighProxyDirect
 
 //user function
 inline void anonymusAt3831(NeighProxy<CellData<2>> x, NeighProxy<CellData<2>> y,

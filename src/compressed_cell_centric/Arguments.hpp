@@ -180,6 +180,103 @@ public:
 private:
 	std::vector<Offsets<N>> offsets;
 };
+template <class T>
+class NeighProxyDirect {
+  public:
+	using dtype = typename T::dtype;
+  NeighProxyDirect(const Data<T::N, dtype>& p_data,
+		   const Coords<T::N> p_cell_coords,
+		   const CellMatIndex& p_cell_mat_index,
+		   const ValueIndex& p_value_index,
+		   T p_dataset,
+		   const Stencil<T::N> p_stencil)
+		: data(p_data),
+		  cell_coords(p_cell_coords),
+		  cell_mat_index(p_cell_mat_index),
+		  value_index(p_value_index),
+		  dataset(p_dataset),
+		  stencil(p_stencil)
+	{
+	}
+
+  bool has_neigh(const Offsets<T::N>& offset) const {
+		if (stencil.contains_offset(offset)) {
+      const Coords<T::N> neighbour_coords = cell_coords + offset;
+      if (std::is_same<T, CellData<T::N, dtype>>::value) {
+			  return true;;
+		} else {
+			return has_neigh_cell_mat_data(neighbour_coords);
+		}
+    } else return false;
+	}
+
+	const dtype& get_neigh(const Offsets<T::N>& offset) const {
+		const Coords<T::N> neighbour_coords = cell_coords + offset;
+
+		if (std::is_same<T, CellData<T::N, dtype>>::value) {
+			return get_neigh_cell_data(neighbour_coords);
+		} else {
+			return get_neigh_cell_mat_data(neighbour_coords);
+		}
+	}
+
+	const dtype& operator[](const Offsets<T::N>& offset) const {
+		return get_neigh(offset);
+	}
+	
+private:
+
+	const dtype&
+	get_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
+		for (const std::pair<CellMatIndex, ValueIndex> pair
+			     : data.cell_iteration(neighbour_coords)) {
+			const CellMatIndex& n_cell_mat_index = pair.first;
+			if (n_cell_mat_index.mat_index
+			    == cell_mat_index.mat_index) {
+				const ValueIndex& n_value_index = pair.second;
+				return unified_data_get(dataset,
+							n_cell_mat_index,
+							n_value_index);
+			}
+		}
+
+		throw "Material not found.";
+	}
+
+  bool has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
+		for (const std::pair<CellMatIndex, ValueIndex> pair
+			     : data.cell_iteration(neighbour_coords)) {
+			const CellMatIndex& n_cell_mat_index = pair.first;
+			if (n_cell_mat_index.mat_index
+			    == cell_mat_index.mat_index) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	const dtype&
+	get_neigh_cell_data(const Coords<T::N>& neighbour_coords) const {
+		const std::size_t flat_index = multidim_index_to_raw(
+			neighbour_coords,
+			data.get_size());
+		const CellMatIndex n_cell_mat_index(flat_index, -1);
+		const ValueIndex n_value_index(ValueIndex::Type::SINGLE_MAT,
+					       -1);
+		return unified_data_get(dataset,
+					n_cell_mat_index,
+					n_value_index);
+	}
+
+	const Data<T::N, dtype>& data;
+	const Coords<T::N> cell_coords;
+	const CellMatIndex& cell_mat_index;
+	const ValueIndex& value_index;
+
+	T dataset;
+	const Stencil<T::N> stencil;	
+};
 
 template<typename T>
 class NeighProxy {
