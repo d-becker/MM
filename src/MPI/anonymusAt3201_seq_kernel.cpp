@@ -9,6 +9,7 @@
 using namespace MM;
 using namespace MM::compressed_cell_centric;
 
+#define NeighProxy NeighProxyDirect
 
 //user function
 inline void anonymusAt3201(double &p, double n, double rho, double t, double Vf) {

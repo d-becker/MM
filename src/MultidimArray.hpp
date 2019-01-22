@@ -53,11 +53,12 @@ public:
 	}
 
 	const dtype& at(const Coords<N>& coords) const {
+#ifdef DEBUG
 		if (!bounds_check(coords)) {
 			throw std::out_of_range(
 				"Coordinates out of range.");
 		}
-
+#endif
 		return operator[](coords);
 	}
 

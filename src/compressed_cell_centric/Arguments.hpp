@@ -167,7 +167,7 @@ private:
 template <std::size_t N>
 class Stencil {
 public:
-	Stencil(std::vector<Offsets<N>> p_offsets)
+	Stencil(std::vector<Offsets<N>> p_offsets) noexcept
 		: offsets(p_offsets)
 	{
 	}
@@ -180,6 +180,7 @@ public:
 private:
 	std::vector<Offsets<N>> offsets;
 };
+
 template <class T>
 class NeighProxyDirect {
   public:
@@ -188,26 +189,22 @@ class NeighProxyDirect {
 		   const Coords<T::N> p_cell_coords,
 		   const CellMatIndex& p_cell_mat_index,
 		   const ValueIndex& p_value_index,
-		   T p_dataset,
-		   const Stencil<T::N> p_stencil)
+		   T p_dataset) noexcept
 		: data(p_data),
 		  cell_coords(p_cell_coords),
 		  cell_mat_index(p_cell_mat_index),
 		  value_index(p_value_index),
-		  dataset(p_dataset),
-		  stencil(p_stencil)
+		  dataset(p_dataset)
 	{
 	}
 
   bool has_neigh(const Offsets<T::N>& offset) const {
-		if (stencil.contains_offset(offset)) {
-      const Coords<T::N> neighbour_coords = cell_coords + offset;
-      if (std::is_same<T, CellData<T::N, dtype>>::value) {
-			  return true;;
+    const Coords<T::N> neighbour_coords = cell_coords + offset;
+    if (std::is_same<T, CellData<T::N, dtype>>::value) {
+      return true;;
 		} else {
 			return has_neigh_cell_mat_data(neighbour_coords);
 		}
-    } else return false;
 	}
 
 	const dtype& get_neigh(const Offsets<T::N>& offset) const {
@@ -239,8 +236,9 @@ private:
 							n_value_index);
 			}
 		}
-
-		throw "Material not found.";
+#ifdef DEBUG
+    throw "no neighbour found"
+#endif
 	}
 
   bool has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
@@ -275,7 +273,6 @@ private:
 	const ValueIndex& value_index;
 
 	T dataset;
-	const Stencil<T::N> stencil;	
 };
 
 template<typename T>
@@ -288,7 +285,7 @@ public:
 		   const CellMatIndex& p_cell_mat_index,
 		   const ValueIndex& p_value_index,
 		   T p_dataset,
-		   const Stencil<T::N> p_stencil)
+		   const Stencil<T::N> p_stencil) noexcept
 		: data(p_data),
 		  cell_coords(p_cell_coords),
 		  cell_mat_index(p_cell_mat_index),
@@ -310,9 +307,11 @@ public:
 	}
 
 	const dtype& get_neigh(const Offsets<T::N>& offset) const {
+#ifdef DEBUG
 		if (!has_neigh(offset)) {
 			throw "No such offset in stencil.";
 		}
+#endif
 
 		const Coords<T::N> neighbour_coords = cell_coords + offset;
 
@@ -354,8 +353,9 @@ private:
 							n_value_index);
 			}
 		}
-
+#ifdef DEBUG
 		throw "Material not found.";
+#endif
 	}
 
   bool has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {

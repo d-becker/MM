@@ -15,32 +15,25 @@ using namespace MM::compressed_cell_centric;
 inline void anonymusAt3831(NeighProxy<CellData<2>> x, NeighProxy<CellData<2>> y,
                           NeighProxy<CellMatData<2>> Vf, NeighProxy<CellMatData<2>> rho,
                           double &rho_out) {
-			double xo = x[{0,0}];
-			double yo = y[{0,0}];
 
-			double dsqr[9];
-
-			for (int nj = -1; nj <= 1; nj++) {
-				for (int ni = -1; ni <= 1; ni++) {
-
-					dsqr[(nj+1)*3 + (ni+1)] = 0.0;
-
-					double xi = x[{ni,nj}];
-					double yi = y[{ni,nj}];
-
-					dsqr[(nj+1)*3 + (ni+1)] += (xo - xi) * (xo - xi);
-					dsqr[(nj+1)*3 + (ni+1)] += (yo - yi) * (yo - yi);
-				}
-			}
+      double rho_sum = 0.0;
+      int Nn = 0;
       if (Vf[{0,0}] > 0.0) {
-        double rho_sum = 0.0;
-        int Nn = 0;
-
+        double xo = x[{0,0}];
+        double yo = y[{0,0}];
         for (int nj = -1; nj <= 1; nj++) {
           for (int ni = -1; ni <= 1; ni++) {
-
             if (Vf.has_neigh({ni,nj})) {
-              rho_sum += rho[{ni,nj}] / dsqr[(nj+1)*3 + (ni+1)];
+              double dsqr = 0.0;
+
+
+              double xi = x[{ni,nj}];
+              double yi = y[{ni,nj}];
+
+              dsqr += (xo - xi) * (xo - xi);
+              dsqr += (yo - yi) * (yo - yi);
+
+              rho_sum += rho[{ni,nj}] / dsqr;
               Nn += 1;
             }
           }
@@ -74,20 +67,20 @@ void mm_par_loop_anonymusAt3831(std::string name, Computation<2> &computation,
       if (structure.structure[i+j*shape[0]].nmats == 1) {
         std::size_t mat_index = structure.structure[i+j*shape[0]].imat;
         anonymusAt3831(
-          NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg0.dataset, arg0.stencil),
-          NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg1.dataset, arg1.stencil),
-          NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg2.dataset, arg2.stencil),
-          NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg3.dataset, arg3.stencil),
+          NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg0.dataset),
+          NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg1.dataset),
+          NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg2.dataset),
+          NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg3.dataset),
           data4[i+j*shape[0]]);
       } else {
         for (std::size_t structure_index = structure.structure[i+j*shape[0]].imat; 
             structure_index!=-1ul; structure_index = structure.mixed_storage[structure_index].nextfrac) {
           std::size_t mat_index = structure.mixed_storage[structure_index].material;
           anonymusAt3831(
-            NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg0.dataset, arg0.stencil),
-            NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg1.dataset, arg1.stencil),
-            NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg2.dataset, arg2.stencil),
-            NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg3.dataset, arg3.stencil),
+            NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg0.dataset),
+            NeighProxy<CellData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg1.dataset),
+            NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg2.dataset),
+            NeighProxy<CellMatData<2>>(computation.data, Coords<2>(i, j), CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg3.dataset),
             data4_list[structure_index]);
         }
       }

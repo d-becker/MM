@@ -103,34 +103,26 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
   computation2.compute([](NeighProxy<CellData<2>> x, NeighProxy<CellData<2>> y,
                           NeighProxy<CellMatData<2>> Vf, NeighProxy<CellMatData<2>> rho,
                           double &rho_out) {
-			double xo = x[{0,0}];
-			double yo = y[{0,0}];
 
-			// There are at most 9 neighbours in 2D case.
-			double dsqr[9];
 
-			for (int nj = -1; nj <= 1; nj++) {
-				for (int ni = -1; ni <= 1; ni++) {
-
-					dsqr[(nj+1)*3 + (ni+1)] = 0.0;
-
-					// i: inner
-					double xi = x[{ni,nj}];
-					double yi = y[{ni,nj}];
-
-					dsqr[(nj+1)*3 + (ni+1)] += (xo - xi) * (xo - xi);
-					dsqr[(nj+1)*3 + (ni+1)] += (yo - yi) * (yo - yi);
-				}
-			}
+      double rho_sum = 0.0;
+      int Nn = 0;
       if (Vf[{0,0}] > 0.0) {
-        double rho_sum = 0.0;
-        int Nn = 0;
-
+        double xo = x[{0,0}];
+        double yo = y[{0,0}];
         for (int nj = -1; nj <= 1; nj++) {
           for (int ni = -1; ni <= 1; ni++) {
-
             if (Vf.has_neigh({ni,nj})) {
-              rho_sum += rho[{ni,nj}] / dsqr[(nj+1)*3 + (ni+1)];
+              double dsqr = 0.0;
+ 
+              // i: inner
+              double xi = x[{ni,nj}];
+              double yi = y[{ni,nj}];
+ 
+              dsqr += (xo - xi) * (xo - xi);
+              dsqr += (yo - yi) * (yo - yi);
+ 
+              rho_sum += rho[{ni,nj}] / dsqr;
               Nn += 1;
             }
           }

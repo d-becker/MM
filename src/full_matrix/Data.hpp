@@ -25,6 +25,7 @@ public:
 		: size(p_size),
 		  mat_number(p_mat_number)
 	{
+#ifdef DEBUG
 		if (p_mat_number == 0) {
 			throw DimensionError(
 				"The number of materials cannot be zero.");
@@ -38,6 +39,7 @@ public:
 		}
 
 		throw_on_zero_size(p_size);
+#endif
 	}
 	
 	const std::array<std::size_t, N>& get_size() const {
@@ -85,12 +87,14 @@ public:
 	
 private:
 	static void throw_on_zero_size(const std::array<std::size_t, N> size) {
+#ifdef DEBUG
 		for (const std::size_t d : size) {
 			if (d == 0) {
 				throw DimensionError(
 					"The size cannot contain zeros.");
 			}
 		}
+#endif
 	}
 	
 	const std::array<std::size_t, N> size;

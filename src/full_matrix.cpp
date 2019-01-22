@@ -36,7 +36,7 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
       IN<CellData<2>>(V),
       REDUCE<CellData<2>>(INC, rho_ave));
 
-  printf("Full matrix, cell centric, alg 1: %g sec\n", omp_get_wtime()-t1);
+  printf("Full matrix, material centric, alg 1: %g sec\n", omp_get_wtime()-t1);
 
 	// Computational loop 2 - Pressure for each cell and each material
   t1 = omp_get_wtime();
@@ -50,7 +50,7 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
       IN<CellMatData<2>>(rho),
       IN<CellMatData<2>>(t),
       IN<CellMatData<2>>(Vf));
-  printf("Full matrix, cell centric, alg 2: %g sec\n", omp_get_wtime()-t1);
+  printf("Full matrix, material centric, alg 2: %g sec\n", omp_get_wtime()-t1);
 
 	// Computational loop 3 - Average density of each material over neighborhood of each cell
   t1 = omp_get_wtime();
@@ -103,5 +103,5 @@ void full_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats,
     NEIGH<CellMatData<2>>(Vf, s9pt),
     NEIGH<CellMatData<2>>(rho, s9pt),
     OUT<CellMatData<2>>(rho_mat_ave));
-  printf("Full matrix, cell centric, alg 3: %g sec\n", omp_get_wtime()-t1);
+  printf("Full matrix, material centric, alg 3: %g sec\n", omp_get_wtime()-t1);
 }

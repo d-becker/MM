@@ -182,10 +182,12 @@ public:
 	}
 
 	const dtype& get_neigh(const Offsets<T::N>& offset) const {
+#ifdef DEBUG
 		if (!stencil.contains_offset(offset)) {
 			throw "No such offset in stencil.";
 		}
-		
+#endif
+
 		const Coords<T::N> neighbour_coords = cell_coords + offset;
 		return unified_data_get(data, neighbour_coords, mat_index);
 	}

@@ -103,7 +103,7 @@ def mm_gen_mpi_compact(master, date, kernels):
 ##########################################################################
     code('#include <iostream>\n#include "MultidimArray.hpp"\n#include "compressed_cell_centric/Arguments.hpp"\n#include "compressed_cell_centric/Computation.hpp"\n\nusing namespace MM;\nusing namespace MM::compressed_cell_centric;')
     code('')
-    #code('#define NeighProxy NeighProxyDirect')
+    code('#define NeighProxy NeighProxyDirect')
     code('')
     comm('user function')
     pos = lam.find('(')
@@ -177,7 +177,7 @@ def mm_gen_mpi_compact(master, date, kernels):
               else:
                 var = 'data'+str(arg)+'[i+j*shape[0]]'
               if arg_type2[arg] == 'NEIGH':
-                var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg'+str(arg)+'.dataset, arg'+str(arg)+'.stencil)'
+                var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg'+str(arg)+'.dataset)'
           else:
             var = 'arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]))'
           line = line + config.depth*' ' + '  ' + var + ',\n'
@@ -200,7 +200,7 @@ def mm_gen_mpi_compact(master, date, kernels):
               else:
                 var = 'data'+str(arg)+'_list[structure_index]'
               if arg_type2[arg] == 'NEIGH':
-                var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg'+str(arg)+'.dataset, arg'+str(arg)+'.stencil)'
+                var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg'+str(arg)+'.dataset)'
           else:
             var = 'arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index))'
           line = line + config.depth*' ' + '  ' + var + ',\n'
