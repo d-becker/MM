@@ -32,7 +32,7 @@ public:
     return coordinates.at(n);
 		return coordinates[n];
 	}
-	
+
   dtype& operator[](const std::size_t n) {
     assert(n < N);
 		return coordinates[n];
@@ -42,7 +42,7 @@ public:
 		return this->coordinates == other.coordinates;
 	}
 private:
-	VecN() 
+	VecN()
     : coordinates()
   {
     coordinates.fill(0);

@@ -63,7 +63,7 @@ public:
     assert(index < buffer.size());
     return buffer[index];
   }
-  
+
 private:
   static std::size_t
   calculate_buffer_length(const std::array<std::size_t, N> size) {
@@ -75,8 +75,8 @@ private:
 
     return res;
   }
-  
-  
+
+
   bool bounds_check(const Coords<N>& coords) const {
     for (std::size_t i = 0; i < N; ++i) {
       if (coords[i] >= size[i]) {
@@ -86,7 +86,7 @@ private:
 
     return true;
   }
-  
+
   const std::array<std::size_t, N> size;
   std::vector<dtype> buffer;
 };

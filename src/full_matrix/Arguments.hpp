@@ -52,16 +52,16 @@ template<typename T>
 class IN {
 public:
   using dtype = typename T::dtype;
-  
+
   IN(T p_data) : data(p_data)
   {
     // constexpr std::size_t N = T::N;
-    
+
     // static_assert(std::is_same<T, CellData<N, dtype>>::value
     //         || std::is_same<T, MatData<dtype>>::value
     //         || std::is_same<T, CellMatData<N, dtype>>::value);
   }
-  
+
   const dtype& get(const Coords<T::N>& cell_index,
                    const std::size_t mat_index) {
     return unified_data_get(data, cell_index, mat_index);
@@ -70,7 +70,7 @@ public:
   typename T::dtype *get_raw(std::array<size_t, T::N> &shape) {
     return data.get_raw(shape);
   }
-  
+
 private:
   T data;
 };
@@ -82,12 +82,12 @@ public:
   {
     // constexpr std::size_t N = T::N;
     // using dtype = typename T::dtype;
-    
+
     // static_assert(std::is_same<T, CellData<N, dtype>>::value
     //         || std::is_same<T, MatData<dtype>>::value
     //         || std::is_same<T, CellMatData<N, dtype>>::value);
   }
-  
+
   typename T::dtype& get(const Coords<T::N>& cell_index,
                          const std::size_t mat_index) {
     return unified_data_get(data, cell_index, mat_index);
@@ -96,7 +96,7 @@ public:
   typename T::dtype *get_raw(std::array<size_t, T::N> &shape) {
     return data.get_raw(shape);
   }
-  
+
 private:
   T data;
 };
@@ -110,11 +110,11 @@ public:
       reducer(p_reducer)
     {
     }
-    
+
   void operator<<(dtype value) {
     reduced_value = reducer(reduced_value, value);
   }
-    
+
 private:
   dtype& reduced_value;
   std::function<dtype(dtype, dtype)>& reducer;
@@ -124,13 +124,13 @@ template<typename T>
 class REDUCE {
 public:
   using dtype = typename T::dtype;
-  
+
   REDUCE(std::function<dtype(dtype, dtype)> p_reducer, T p_data)
     : reducer(p_reducer),
       data(p_data)
   {
     // constexpr std::size_t N = T::N;
-    
+
     // static_assert(std::is_same<T, CellData<N, dtype>>::value
     //         || std::is_same<T, MatData<dtype>>::value
     //         || std::is_same<T, CellMatData<N, dtype>>::value);
@@ -163,7 +163,7 @@ public:
     auto it = std::find(offsets.begin(), offsets.end(), offset);
     return it != offsets.end();
   }
-  
+
 private:
   std::vector<Offsets<N>> offsets;
 };
@@ -192,13 +192,13 @@ public:
   const dtype& operator[](const Offsets<T::N>& offset) const {
     return get_neigh(offset);
   }
-  
+
 private:
   const Coords<T::N> cell_coords;
   const std::size_t mat_index;
 
   T data;
-  const Stencil<T::N> stencil;  
+  const Stencil<T::N> stencil;
 };
 
 template <class T>
@@ -215,14 +215,14 @@ class NeighProxyDirect {
 
 template<typename T>
 class NEIGH {
-public:  
+public:
   using dtype = typename T::dtype;
-  
+
   NEIGH(T p_data, const Stencil<T::N> p_stencil)
     : data(p_data), stencil(p_stencil)
   {
     // constexpr std::size_t N = T::N;
-    
+
     // static_assert(std::is_same<T, CellData<N, dtype>>::value
     //         || std::is_same<T, MatData<dtype>>::value
     //         || std::is_same<T, CellMatData<N, dtype>>::value);
@@ -277,7 +277,7 @@ template<typename dtype = double>
 class FREE_ARRAY {
 public:
   using array_type = std::vector<dtype>;
-  
+
   FREE_ARRAY(const array_type& p_values)
     : values(p_values)
   {
@@ -288,7 +288,7 @@ public:
                         const std::size_t mat_index) const {
     return values;
   }
-  
+
 private:
   const array_type& values;
 };

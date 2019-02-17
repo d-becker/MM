@@ -27,7 +27,7 @@ public:
   const std::array<std::size_t, N>& get_begin() const {
     return begin;
   }
-  
+
   const std::array<std::size_t, N>& get_end() const {
     return end;
   }
@@ -35,10 +35,10 @@ public:
   bool has_next() const {
     return _has_next;
   }
-  
+
   std::array<std::size_t, N> next() {
     std::array<std::size_t, N> res = current;
-    
+
     for (std::size_t i = 0; i < N; ++i) {
       ++current[i];
 
@@ -47,7 +47,7 @@ public:
           _has_next = false;
           break;
         }
-        
+
         current[i] = begin[i];
       } else {
         break;
@@ -56,7 +56,7 @@ public:
 
     return res;
   }
-  
+
 private:
   const std::array<std::size_t, N> begin;
   const std::array<std::size_t, N> end; // Exclusive.

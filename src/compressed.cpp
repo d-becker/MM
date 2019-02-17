@@ -114,14 +114,14 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
           for (int ni = -1; ni <= 1; ni++) {
             if (Vf.has_neigh({ni,nj})) {
               double dsqr = 0.0;
- 
+
               // i: inner
               double xi = x[{ni,nj}];
               double yi = y[{ni,nj}];
- 
+
               dsqr += (xo - xi) * (xo - xi);
               dsqr += (yo - yi) * (yo - yi);
- 
+
               rho_sum += rho[{ni,nj}] / dsqr;
               Nn += 1;
             }

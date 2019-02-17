@@ -35,7 +35,7 @@ public:
 
     assert_no_zero_size(p_size);
   }
-  
+
   const std::array<std::size_t, N>& get_size() const {
     return size;
   }
@@ -63,7 +63,7 @@ public:
   CellMatData<N, dtype> new_cell_mat_data() {
     return new_cell_mat_data(size);
   }
-  
+
   CellMatData<N, dtype>
   new_cell_mat_data(const std::array<std::size_t, N>& arr_size) {
     assert_no_zero_size(arr_size);
@@ -75,10 +75,10 @@ public:
     extended_arr_size[N] = mat_number;
 
     cell_mat_buffers.emplace_back(extended_arr_size);
-    
+
     return CellMatData<N, dtype>(cell_mat_buffers.back());
   }
-  
+
 private:
   static void assert_no_zero_size(const std::array<std::size_t, N> size) {
     for (const std::size_t d : size) {
@@ -86,10 +86,10 @@ private:
       assert(d != 1);
     }
   }
-  
+
   const std::array<std::size_t, N> size;
   const std::size_t mat_number;
-  
+
   std::list<MultidimArray<N, dtype>> cell_buffers;
   std::list<std::vector<dtype>> mat_buffers;
   std::list<MultidimArray<N + 1, dtype>> cell_mat_buffers;

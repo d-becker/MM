@@ -2,7 +2,7 @@
 * Open source copyright declaration based on BSD open source template:
 * http://www.opensource.org/licenses/bsd-license.php
 *
-* Copyright (c) 2013, Istvan Reguly and others. 
+* Copyright (c) 2013, Istvan Reguly and others.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -138,7 +138,7 @@ void initialise_field_rand(CellMatData<2>& rho, CellMatData<2>& t, CellMatData<2
 			}
 		}
 	}
-	
+
 	//Bottom
 	for (unsigned int mat = 0; mat < Nmats/2; mat++) {
 #pragma omp parallel for
@@ -244,7 +244,7 @@ int main(int argc, char* argv[]) {
     Data<2> data({COLS, ROWS}, MAT_N);
 
 
-	//Allocate the four state variables for all Nmats materials and all cells 
+	//Allocate the four state variables for all Nmats materials and all cells
 	//density
     CellMatData<2> rho = data.new_cell_mat_data();
     //density average in neighbourhood
@@ -341,6 +341,6 @@ int main(int argc, char* argv[]) {
 
 	full_matrix_cell_centric(sizex, sizey, Nmats, data, rho, rho_mat_ave, p, Vf, t, V, x, y, n, rho_ave);
   compact_matrix_cell_centric(sizex, sizey, Nmats, data, rho, rho_mat_ave, p, Vf, t, V, x, y, n, rho_ave, mats);
-	
+
 	return 0;
 }

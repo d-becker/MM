@@ -20,7 +20,7 @@ class CellData {
 public:
   constexpr static std::size_t N = _N;
   using dtype = _dtype;
-  
+
   CellData(MultidimArray<N, dtype>& p_buffer)
     : buffer(p_buffer)
   {
@@ -33,7 +33,7 @@ public:
   std::size_t get_flat_size() const {
     return buffer.get_flat_size();
   }
-  
+
   const dtype& operator[](const Coords<N>& index) const {
     return buffer[index];
   }
@@ -68,7 +68,7 @@ class MatData {
 public:
   using dtype = _dtype;
   constexpr static std::size_t N = _N;
-  
+
   MatData(std::vector<dtype>& p_material_data)
     : material_data(p_material_data)
   {
@@ -77,7 +77,7 @@ public:
   std::size_t get_size() const {
     return material_data.size();
   }
-  
+
   const dtype& operator[](const std::size_t index) const {
     assert(index < material_data.size());
     return material_data[index];
@@ -107,7 +107,7 @@ class CellMatData {
 public:
   constexpr static std::size_t N = _N;
   using dtype = _dtype;
-  
+
   CellMatData(MultidimArray<N + 1, dtype>& p_data)
     : data(p_data),
       size_without_mat_dimension(
@@ -157,7 +157,7 @@ private:
 
     return Coords<N + 1>::from_array(arr);
   }
-  
+
   // The last dimension is the material.
   MultidimArray<N + 1, dtype>& data;
 

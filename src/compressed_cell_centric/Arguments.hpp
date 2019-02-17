@@ -38,7 +38,7 @@ dtype& unified_data_get(CellMatData<N, dtype> data,
   if (value_index.type == ValueIndex::Type::MULTIMAT) {
     return data.mixed_storage_value_at(value_index.index);
   }
-  
+
   return data.cell_value_at(value_index.index);
 }
 
@@ -46,11 +46,11 @@ template<typename T>
 class IN {
 public:
   using dtype = typename T::dtype;
-  
+
   IN(T p_data) : data(p_data)
   {
     constexpr std::size_t N = T::N;
-    
+
     static_assert(std::is_same<T, CellData<N, dtype>>::value
             || std::is_same<T, MatData<N, dtype>>::value
             || std::is_same<T, CellMatData<N, dtype>>::value);
@@ -71,7 +71,7 @@ public:
   typename T::dtype *get_raw_list() {
     return data.get_raw_list();
   }
-  
+
 private:
   T data;
 };
@@ -85,7 +85,7 @@ public:
   {
     constexpr std::size_t N = T::N;
     using dtype = typename T::dtype;
-    
+
     static_assert(std::is_same<T, CellData<N, dtype>>::value
             || std::is_same<T, MatData<N, dtype>>::value
             || std::is_same<T, CellMatData<N, dtype>>::value);
@@ -98,7 +98,7 @@ public:
                          const ValueIndex& value_index) {
     return unified_data_get(data, cell_mat_index, value_index);
   }
-  
+
   typename T::dtype *get_raw() {
     return data.get_raw();
   }
@@ -120,11 +120,11 @@ public:
       reducer(p_reducer)
     {
     }
-    
+
   void operator<<(dtype value) {
     reduced_value = reducer(reduced_value, value);
   }
-    
+
 private:
   dtype& reduced_value;
   std::function<dtype(dtype, dtype)>& reducer;
@@ -134,13 +134,13 @@ template<typename T>
 class REDUCE {
 public:
   using dtype = typename T::dtype;
-  
+
   REDUCE(std::function<dtype(dtype, dtype)> p_reducer, T p_data)
     : reducer(p_reducer),
       data(p_data)
   {
     constexpr std::size_t N = T::N;
-    
+
     static_assert(std::is_same<T, CellData<N, dtype>>::value
             || std::is_same<T, MatData<N, dtype>>::value
             || std::is_same<T, CellMatData<N, dtype>>::value);
@@ -173,7 +173,7 @@ public:
     auto it = std::find(offsets.begin(), offsets.end(), offset);
     return it != offsets.end();
   }
-  
+
 private:
   std::vector<Offsets<N>> offsets;
 };
@@ -217,7 +217,7 @@ public:
   const dtype& operator[](const Offsets<T::N>& offset) const {
     return get_neigh(offset);
   }
-  
+
 private:
 
   const dtype&
@@ -316,7 +316,7 @@ public:
   const dtype& operator[](const Offsets<T::N>& offset) const {
     return get_neigh(offset);
   }
-  
+
 private:
   const dtype&
   get_neigh_cell_data(const Coords<T::N>& neighbour_coords) const {
@@ -366,19 +366,19 @@ private:
   const ValueIndex& value_index;
 
   T dataset;
-  const Stencil<T::N> stencil;  
+  const Stencil<T::N> stencil;
 };
 
 template<typename T>
 class NEIGH {
-public:  
+public:
   using dtype = typename T::dtype;
-  
+
   NEIGH(T p_dataset, const Stencil<T::N> p_stencil)
     : dataset(p_dataset), stencil(p_stencil)
   {
     constexpr std::size_t N = T::N;
-    
+
     static_assert(std::is_same<T, CellData<N, dtype>>::value
             || std::is_same<T, MatData<N, dtype>>::value
             || std::is_same<T, CellMatData<N, dtype>>::value);
@@ -451,7 +451,7 @@ template<typename dtype = double>
 class FREE_ARRAY {
 public:
   using array_type = std::vector<dtype>;
-  
+
   FREE_ARRAY(const array_type& p_values)
     : values(p_values)
   {
@@ -464,7 +464,7 @@ public:
                         const ValueIndex& value_index) const {
     return values;
   }
-  
+
 private:
   const array_type& values;
 };
