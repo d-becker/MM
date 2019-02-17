@@ -184,8 +184,8 @@ TEST(test_NEIGH, get_neigh) {
         MultidimArray<2, double> arr({2, 2});
 	const double value1 = 2.0;
 	const double value2 = 4.0;
-	arr.at(Coords<2>(0u, 0u)) = value1;
-	arr.at(Coords<2>(0u, 1u)) = value2;
+	arr[Coords<2>(0u, 0u)] = value1;
+	arr[Coords<2>(0u, 1u)] = value2;
 	const CellData<2> cell_data(arr);
 		
 	NEIGH<CellData<2>> neigh(cell_data, stencil);

@@ -168,10 +168,10 @@ bool check_mass_by_cell(const CellData<2>& mass) {
 	// 0.092052   0.454230
 
 	return
-		eq(mass.at(Coords<2>(0u, 0u)), 0.554299) &&
-		eq(mass.at(Coords<2>(0u, 1u)), 1.103465) &&
-		eq(mass.at(Coords<2>(1u, 0u)), 0.092052) &&
-		eq(mass.at(Coords<2>(1u, 1u)), 0.454230);
+		eq(mass[Coords<2>(0u, 0u)], 0.554299) &&
+		eq(mass[Coords<2>(0u, 1u)], 1.103465) &&
+		eq(mass[Coords<2>(1u, 0u)], 0.092052) &&
+		eq(mass[Coords<2>(1u, 1u)], 0.454230);
 }
 
 
@@ -300,5 +300,6 @@ int main() {
 	test3();
 	test4_index();
 	test5_free_data();
+
 	return 0;
 }

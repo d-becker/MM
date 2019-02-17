@@ -199,7 +199,7 @@ TEST_F(CompressedComputation, neigh) {
         for (std::size_t i = 0; i < cols; ++i) {
 		for (std::size_t j = 0; j < rows; ++j) {
 			const Coords<2> index(i, j);
-		        x.at(index) = 1;
+		        x[index] = 1;
 		}
 	}
 	
@@ -218,7 +218,7 @@ TEST_F(CompressedComputation, neigh) {
 	for (std::size_t i = 1; i < cols - 1; ++i) {
 		for (std::size_t j = 1; j < rows - 1; ++j) {
 			const Coords<2> index(i, j);
-			ASSERT_EQ(y.at(index), 9);
+			ASSERT_EQ(y[index], 9);
 		}
 	}
 	// FAIL() << "Unimplemented.";
@@ -239,10 +239,10 @@ TEST_F(CompressedComputation, index) {
 			    INDEX<2>(),
 			    OUT<CellData<2>>(cell_data));
 
-	ASSERT_EQ(cell_data.at(Coords<2>(0u, 0u)), 0);
-	ASSERT_EQ(cell_data.at(Coords<2>(0u, 1u)), 2);
-	ASSERT_EQ(cell_data.at(Coords<2>(1u, 0u)), 1);
-	ASSERT_EQ(cell_data.at(Coords<2>(1u, 1u)), 3);
+	ASSERT_EQ(cell_data[Coords<2>(0u, 0u)], 0);
+	ASSERT_EQ(cell_data[Coords<2>(0u, 1u)], 2);
+	ASSERT_EQ(cell_data[Coords<2>(1u, 0u)], 1);
+	ASSERT_EQ(cell_data[Coords<2>(1u, 1u)], 3);
 }
 
 TEST_F(CompressedComputation, free_scalar) {

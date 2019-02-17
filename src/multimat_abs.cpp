@@ -274,14 +274,14 @@ int main(int argc, char* argv[]) {
 	double dy = 1.0/sizey;
 	for (unsigned int j = 0; j < sizey; j++) {
 		for (unsigned int i = 0; i < sizex; i++) {
-			V.at(Coords<2>(i,j)) = dx*dy;
-			x.at(Coords<2>(i,j)) = dx*i;
-			y.at(Coords<2>(i,j)) = dy*j;
+			V[Coords<2>(i,j)] = dx*dy;
+			x[Coords<2>(i,j)] = dx*i;
+			y[Coords<2>(i,j)] = dy*j;
 		}
 	}
 
 	for (unsigned int mat = 0; mat < Nmats; mat++) {
-		n.at(mat) = 1.0; // dummy value
+		n[mat] = 1.0; // dummy value
 	}
 
   if (argc>=6) initialise_field_rand(rho, t, p, Nmats, sizex, sizey, atof(argv[3]), atof(argv[4]), atof(argv[5]));
