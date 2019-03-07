@@ -52,13 +52,13 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
         p.cell_value_at(idx) = f_p.at(Coords<2>(i,j),mats[idx][0]);
         t.cell_value_at(idx) = f_t.at(Coords<2>(i,j),mats[idx][0]);
       }
-        V.at(Coords<2>(i,j)) = f_V.at(Coords<2>(i,j));
-        x.at(Coords<2>(i,j)) = f_x.at(Coords<2>(i,j));
-        y.at(Coords<2>(i,j)) = f_y.at(Coords<2>(i,j));
+        V[Coords<2>(i,j)] = f_V[Coords<2>(i,j)];
+        x[Coords<2>(i,j)] = f_x[Coords<2>(i,j)];
+        y[Coords<2>(i,j)] = f_y[Coords<2>(i,j)];
     }
   }
   for (size_t mat = 0; mat < Nmats; mat++) {
-    n.at(mat) = f_n.at(mat);
+    n[mat] = f_n[mat];
   }
 
 	// Cell-centric algorithms
@@ -122,7 +122,9 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
               dsqr += (xo - xi) * (xo - xi);
               dsqr += (yo - yi) * (yo - yi);
 
-              rho_sum += rho[{ni,nj}] / dsqr;
+              // rho_sum += rho[{ni,nj}] / dsqr;
+              NeighProxy<CellMatData<2>>::Token token = rho.get_cell_mat_token({ni, nj});
+              rho_sum += rho.get_with_token(token) / dsqr;
               Nn += 1;
             }
           }

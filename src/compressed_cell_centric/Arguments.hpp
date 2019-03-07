@@ -317,6 +317,40 @@ public:
     return get_neigh(offset);
   }
 
+  struct Token {
+    friend class NeighProxy;
+    static_assert(std::is_same<T, CellMatData<T::N, dtype>>::value);
+
+    private:
+      Token(ValueIndex p_value_index) : value_index(p_value_index) {}
+
+      ValueIndex value_index;
+  };
+
+  const Token get_cell_mat_token(const Offsets<T::N>& neighbour_offset) const {
+    static_assert(std::is_same<T, CellMatData<T::N, dtype>>::value);
+
+    const Coords<T::N> neighbour_coords = cell_coords + neighbour_offset;
+
+    for (const std::pair<CellMatIndex, ValueIndex> pair
+           : data.cell_iteration(neighbour_coords)) {
+      const CellMatIndex& n_cell_mat_index = pair.first;
+      if (n_cell_mat_index.mat_index == cell_mat_index.mat_index) {
+        const ValueIndex& n_value_index = pair.second;
+        return Token(n_value_index);
+      }
+    }
+
+    // Material not found. Only call this if it is sure that the neighbour
+    // exists and contains the material.
+    assert(false);
+  }
+
+  const dtype& get_with_token(const Token& token) const {
+    // CellMatIndex is not used.
+    return unified_data_get(dataset, CellMatIndex(-1, -1), token.value_index);
+  }
+
 private:
   const dtype&
   get_neigh_cell_data(const Coords<T::N>& neighbour_coords) const {
@@ -343,8 +377,6 @@ private:
       }
     }
 
-    // Material not found. Only call this if it is sure that the neighbour
-    // exists.
     assert(false);
   }
 

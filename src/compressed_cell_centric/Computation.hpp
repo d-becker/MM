@@ -26,19 +26,19 @@ public:
 	void compute(FUNC func, ARGS ...args) {
 		// TODO: check all args belong to this->data.
 		
-		while (index_generator.has_next()) {
-			const Coords<N> coords
-				= Coords<N>::from_array(index_generator.next());
-			for (std::pair<CellMatIndex, ValueIndex> pair
-				     : data.cell_iteration(coords)) {
-				     const CellMatIndex& cell_mat_index
-					     = pair.first;
-				     const ValueIndex& value_index
-					     = pair.second;
-				     func(args.get(coords,
-						   data,
-						   cell_mat_index,
-				     		   value_index)...);
+    while (index_generator.has_next()) {
+      const Coords<N> coords
+        = Coords<N>::from_array(index_generator.next());
+      for (std::pair<CellMatIndex, ValueIndex> pair
+          : data.cell_iteration(coords)) {
+        const CellMatIndex& cell_mat_index
+          = pair.first;
+        const ValueIndex& value_index
+          = pair.second;
+        func(args.get(coords,
+              data,
+              cell_mat_index,
+              value_index)...);
 			}
 		}
 	}
