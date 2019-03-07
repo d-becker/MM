@@ -27,7 +27,7 @@ public:
 		  cell_values(),
 		  mixed_storage_values()
 	{
-		
+
 	}
 
 	const std::array<std::size_t, N>& get_size() const {
@@ -78,13 +78,13 @@ public:
 
 		return set.size();
 	}
-	
+
 	const std::size_t mat_number;
 	const std::array<std::size_t, N> size;
 	CompressedDataStructure structure;
 
 	std::list<MultidimArray<N, dtype>> cell_only_buffers;
-        std::list<std::vector<dtype>> mat_only_buffers;
+  std::list<std::vector<dtype>> mat_only_buffers;
 	std::list<std::vector<dtype>> cell_values;
 	std::list<std::vector<dtype>> mixed_storage_values;
 };

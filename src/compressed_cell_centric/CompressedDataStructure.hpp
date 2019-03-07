@@ -36,7 +36,7 @@ struct CellMatIndex {
 		  mat_index(p_mat_index)
 	{
 	}
-	
+
 	std::size_t cell_index;
 	std::size_t mat_index;
 };
@@ -67,7 +67,7 @@ public:
 		for (std::size_t i = 0; i < num_of_cells; ++i) {
 			const std::vector<std::size_t>& materials_in_cell
 				= materials[i];
-			
+
 			handle_cell(i, materials_in_cell);
 		}
 	}
@@ -82,7 +82,7 @@ public:
 			  mixed_storage_index(p_mixed_storage_index)
 		{
 		}
-		
+
 		std::pair<CellMatIndex, ValueIndex> operator*() {
 			const Cell& cell = structure.cell_at(cell_index);
 			if (cell.nmats > 1) {
@@ -106,7 +106,7 @@ public:
 				ValueIndex::Type::SINGLE_MAT, cell_index);
 			return std::make_pair(cell_mat_index, value_index);
 		}
-		
+
 		CellIterator& operator++() {
 			const Cell& cell = structure.cell_at(cell_index);
 
@@ -155,12 +155,12 @@ public:
 			if (structure.cell_number() == 0) {
 				return CellIterator(structure, 0, -1);
 			}
-		
+
 			const Cell& cell = structure.cell_at(cell_index);
 			if (cell.nmats <= 1) {
 				return CellIterator(structure, cell_index, 0);
 			}
-		
+
 			return CellIterator(structure,
 					    cell_index,
 					    cell.imat);
@@ -177,7 +177,7 @@ public:
 	CellIteration cell_iteration(const std::size_t cell_index) const {
 		return CellIteration(*this, cell_index);
 	}
-	
+
 	const Cell& cell_at(const std::size_t index) const {
 		return structure.at(index);
 	}
@@ -189,7 +189,7 @@ public:
 	std::size_t cell_number() const {
 		return structure.size();
 	}
-	
+
 	std::size_t mixed_storage_size() const {
 		return mixed_storage.size();
 	}
