@@ -112,7 +112,10 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
         double yo = y[{0,0}];
         for (int nj = -1; nj <= 1; nj++) {
           for (int ni = -1; ni <= 1; ni++) {
-            if (Vf.has_neigh({ni,nj})) {
+            NeighProxy<CellMatData<2>>::Token token = Vf.get_cell_mat_token({ni, nj});
+
+            // if (Vf.has_neigh({ni,nj})) {
+            if (token.is_valid()) {
               double dsqr = 0.0;
 
               // i: inner
@@ -123,7 +126,6 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
               dsqr += (yo - yi) * (yo - yi);
 
               // rho_sum += rho[{ni,nj}] / dsqr;
-              NeighProxy<CellMatData<2>>::Token token = rho.get_cell_mat_token({ni, nj});
               rho_sum += rho.get_with_token(token) / dsqr;
               Nn += 1;
             }

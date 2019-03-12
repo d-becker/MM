@@ -182,6 +182,10 @@ public:
   {
   }
 
+  bool has_neigh(const Offsets<T::N>& offset) const {
+    return true;
+  }
+
   const dtype& get_neigh(const Offsets<T::N>& offset) const {
     assert(stencil.contains_offset(offset));
 
@@ -191,6 +195,43 @@ public:
 
   const dtype& operator[](const Offsets<T::N>& offset) const {
     return get_neigh(offset);
+  }
+
+  struct Token {
+    friend class NeighProxy;
+
+    static_assert(std::is_same<T, CellMatData<T::N, dtype>>::value);
+    bool is_valid() const {
+      for (std::size_t i = 0; i < T::N; i++) {
+        if (coords[i] == -1) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+  private:
+    static Token invalid_token() {
+      Coords<T::N> res;
+      res[0] = -1;
+      return res;
+    }
+
+    Token(Coords<T::N> p_coords) : coords(p_coords) {}
+
+    Coords<T::N> coords;
+  };
+
+  Token get_cell_mat_token(const Offsets<T::N>& neighbour_offset) const {
+    const Coords<T::N> neighbour_coords = cell_coords + neighbour_offset;
+    return Token(neighbour_coords);
+  }
+
+  const dtype get_with_token(const Token& token) const {
+    assert(token.is_valid());
+
+    return unified_data_get(data, token.coords, mat_index);
   }
 
 private:
@@ -203,11 +244,42 @@ private:
 
 template <class T>
 class NeighProxyDirect {
+  using dtype = typename T::dtype;
   public:
   NeighProxyDirect(std::array<std::size_t, T::N> _shape, const typename T::dtype * __restrict__ _ptr) : shape(_shape), ptr(_ptr) {}
+
   const typename T::dtype& operator[](const std::array<int, T::N> offsets) const {
    return ptr[offsets[0] + offsets[1]*shape[0]];
   }
+
+  // TODO: Decide if we would like to use these.
+  struct Token {
+    friend class NeighProxyDirect;
+
+    static_assert(std::is_same<T, CellMatData<T::N, dtype>>::value);
+
+    bool is_valid() const {
+      return true;
+    }
+
+  private:
+    Token(Offsets<T::N> p_offsets) : offsets(p_offsets) {}
+
+    Offsets<T::N> offsets;
+  };
+
+  Token get_cell_mat_token(const Offsets<T::N>& neighbour_offset) const {
+    return Token(neighbour_offset);
+  }
+
+  const dtype get_with_token(const Token& token) const {
+    assert(token.is_valid());
+
+
+    return ptr[token.offsets[0] + token.offsets[1]*shape[0]];
+  }
+
+
   private:
     std::array<std::size_t, T::N> shape;
     const typename T::dtype * __restrict__ ptr;

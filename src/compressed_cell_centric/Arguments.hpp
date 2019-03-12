@@ -225,13 +225,25 @@ public:
     friend class NeighProxyDirect;
     static_assert(std::is_same<T, CellMatData<T::N, dtype>>::value);
 
-    private:
-      Token(ValueIndex p_value_index) : value_index(p_value_index) {}
 
-      ValueIndex value_index;
+    // Returns whether the token is valid. An invalid token can be returned if
+    // the user asks for a token for a material in a cell where the material is
+    // not present.
+    bool is_valid() const {
+      return value_index.index >= 0;
+    }
+
+  private:
+    static Token invalid_token() {
+      return Token(ValueIndex(ValueIndex::Type::SINGLE_MAT, -1));
+    }
+
+    Token(ValueIndex p_value_index) : value_index(p_value_index) {}
+
+    ValueIndex value_index;
   };
 
-  const Token get_cell_mat_token(const Offsets<T::N>& neighbour_offset) const {
+  Token get_cell_mat_token(const Offsets<T::N>& neighbour_offset) const {
     static_assert(std::is_same<T, CellMatData<T::N, dtype>>::value);
 
     const Coords<T::N> neighbour_coords = cell_coords + neighbour_offset;
@@ -245,12 +257,13 @@ public:
       }
     }
 
-    // Material not found. Only call this if it is sure that the neighbour
-    // exists and contains the material.
-    assert(false);
+    // Material not found, returning an invalid token.
+    return Token::invalid_token();
   }
 
   const dtype& get_with_token(const Token& token) const {
+    assert(token.is_valid());
+
     // CellMatIndex is not used.
     return unified_data_get(dataset, CellMatIndex(-1, -1), token.value_index);
   }
