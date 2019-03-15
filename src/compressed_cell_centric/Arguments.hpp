@@ -230,7 +230,7 @@ public:
     // the user asks for a token for a material in a cell where the material is
     // not present.
     bool is_valid() const {
-      return value_index.index >= 0;
+      return value_index.index != -1;
     }
 
   private:
