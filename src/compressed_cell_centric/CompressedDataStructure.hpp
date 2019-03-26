@@ -1,6 +1,7 @@
 #ifndef MM_COMPRESSED_CELL_DATA_STRUCTURE_HPP
 #define MM_COMPRESSED_CELL_DATA_STRUCTURE_HPP
 
+#include <cassert>
 #include <cstddef>
 #include <utility>
 #include <vector>
@@ -19,13 +20,10 @@ struct Cell {
 };
 
 struct MixedStorageCell {
-	// The index of the next material in the same cell
-	// or -1 if this is the last one.
-	std::size_t nextfrac;
-
 	// The index of the cell this material belongs to.
 	std::size_t frac2cell;
 
+  // The number of the material.
 	std::size_t material;
 };
 
@@ -111,15 +109,12 @@ public:
 			const Cell& cell = structure.cell_at(cell_index);
 
 			if (cell.nmats > 1) {
-				const MixedStorageCell& mixed_cell
-					= structure.mixed_cell_at(
-						mixed_storage_index);
-				const std::size_t next = mixed_cell.nextfrac;
+        mixed_storage_index++;
 
-				if (next != -1u) {
-					mixed_storage_index = next;
-					return *this;
-				}
+        const std::size_t end_index = cell.imat + cell.nmats;
+        if (mixed_storage_index < end_index) {
+          return *this;
+        }
 			}
 
 			mixed_storage_index = -1;
@@ -179,11 +174,13 @@ public:
 	}
 
 	const Cell& cell_at(const std::size_t index) const {
-		return structure.at(index);
+    assert(index < structure.size());
+		return structure[index];
 	}
 
 	const MixedStorageCell& mixed_cell_at(const std::size_t index) const {
-		return mixed_storage.at(index);
+    assert(index < mixed_storage.size());
+		return mixed_storage[index];
 	}
 
 	std::size_t cell_number() const {
@@ -208,19 +205,15 @@ public:
 		}
 	}
 
-	void add_materials_to_mixed_storage(
-		std::size_t cell_index,
+  void add_materials_to_mixed_storage(std::size_t cell_index,
 		const std::vector<std::size_t>& materials_in_cell)
 	{
 		for (const std::size_t material : materials_in_cell) {
 			MixedStorageCell ms;
-			ms.nextfrac = mixed_storage.size() + 1;
 			ms.frac2cell = cell_index;
 			ms.material = material;
 			mixed_storage.emplace_back(ms);
 		}
-
-		mixed_storage.back().nextfrac = -1;
 	}
 
 	std::vector<Cell> structure;
