@@ -130,9 +130,9 @@ void test1() {
 	const std::size_t COLS = 2;
 	const std::size_t ROWS = 2;
 	const std::size_t MAT_N = 2;
-	
+
 	Data<2> data({COLS, ROWS}, MAT_N);
-	
+
 	CellMatData<2> density = data.new_cell_mat_data();
 	CellMatData<2> volume = data.new_cell_mat_data();
 
@@ -144,7 +144,7 @@ void test1() {
 
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
-	
+
 	computation.compute([] (double density,
 				double volume,
 				double& mass) {
@@ -184,7 +184,7 @@ void test2() {
 	const std::size_t MAT_N = 2;
 
 	Data<2> data({COLS, ROWS}, MAT_N);
-	
+
 	CellMatData<2> density = data.new_cell_mat_data();
 	CellMatData<2> volume = data.new_cell_mat_data();
 
@@ -197,7 +197,7 @@ void test2() {
 	auto INC = [] (double left, double right) {
 		return left + right;
 	};
-	
+
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
 	computation.compute([] (double density,
@@ -228,10 +228,10 @@ void test3() {
 			 {-1,1}, {-1,0}, {-1,-1}});
 
         // Fill the datasets with data.
-	
+
 	IndexGenerator<2> index_generator({1, 1}, {127, 127});
 	Computation<2> computation(data, index_generator);
-	
+
 	computation.compute([] (NeighProxy<CellData<2>> x,
 				double& y) {
 				    y = -x[{1,1}]  - x[{1,0}]   - x[{1,-1}]
@@ -252,10 +252,10 @@ void test4_index() {
 	CellData<2> y = data.new_cell_data();
 
         // Fill the datasets with data.
-	
+
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
-	
+
 	computation.compute([] (Coords<2> index,
 				double& y) {
       std::cout << index[0] << ", " << index[1] << std::endl;
@@ -274,14 +274,14 @@ void test5_free_data() {
 
 	CellData<1> input = data.new_cell_data();
 	CellData<1> output = data.new_cell_data();
-	
+
 	Stencil<1> neighs({{-1}, {0}, {1}});
 
         // Fill the dataset with data.
-	
+
 	IndexGenerator<1> index_generator({1}, {COLS - 1});
 	Computation<1> computation(data, index_generator);
-	
+
 	computation.compute([] (
 		const double& dt,
 		const NeighProxy<CellData<1>> input,

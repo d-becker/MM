@@ -31,7 +31,7 @@ public:
 		  mixed_storage_values(p_mixed_storage_values)
 	{
 	}
-		
+
 	dtype& cell_value_at(const std::size_t index) {
 		return cell_values.at(index);
 	}
@@ -57,12 +57,12 @@ public:
 	}
 
 	dtype* get_raw() {
-    	return &cell_values[0];
-  	}
+    return &cell_values[0];
+  }
 
-  	dtype* get_raw_list() {
-    	return &mixed_storage_values[0];
-  	}
+  dtype* get_raw_list() {
+    return &mixed_storage_values[0];
+  }
 private:
 	// const std::array<std::size_t, N>& size;
 	// const CompressedDataStructure& structure;

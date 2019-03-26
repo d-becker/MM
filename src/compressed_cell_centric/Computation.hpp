@@ -21,11 +21,11 @@ public:
 		  index_generator(p_index_generator)
 	{
 	}
-		
+
 	template<typename FUNC, typename ...ARGS>
 	void compute(FUNC func, ARGS ...args) {
 		// TODO: check all args belong to this->data.
-		
+
     while (index_generator.has_next()) {
       const Coords<N> coords
         = Coords<N>::from_array(index_generator.next());

@@ -21,7 +21,7 @@ TEST(test_IN, cell_data) {
 	const double value = 2.4;
 	const std::size_t cell_index = 1;
 	arr.at_raw_index(cell_index) = value;
-	
+
 	const CellData<2> cell_data(arr);
 	const IN<CellData<2>> in(cell_data);
 
@@ -53,7 +53,7 @@ TEST(test_IN, mat_data) {
 TEST(test_IN, cell_mat_data) {
 	std::vector<double> cell_values{2.2, 1.4, 3.1, 4.6};
 	std::vector<double> mixed_values{5.6, 8.2, 6.8, 4.3};
-	
+
 	const CellMatData<2> cell_mat_data(cell_values, mixed_values);
 	const IN<CellMatData<2>> in(cell_mat_data);
 
@@ -68,7 +68,7 @@ TEST(test_IN, cell_mat_data) {
 
 TEST(test_OUT, cell_data) {
 	MultidimArray<2, double> arr({2, 2});
-	
+
 	const CellData<2> cell_data(arr);
 	OUT<CellData<2>> out(cell_data);
 
@@ -102,7 +102,7 @@ TEST(test_OUT, mat_data) {
 TEST(test_OUT, cell_mat_data) {
 	std::vector<double> cell_values{2.2, 1.4, 3.1, 4.6};
 	std::vector<double> mixed_values{5.6, 8.2, 6.8, 4.3};
-	
+
 	const CellMatData<2> cell_mat_data(cell_values, mixed_values);
 	OUT<CellMatData<2>> out(cell_mat_data);
 
@@ -118,7 +118,7 @@ TEST(test_OUT, cell_mat_data) {
 
 TEST(test_REDUCE, cell_data) {
 	MultidimArray<2, double> arr({2, 2});
-	
+
 	const CellData<2> cell_data(arr);
 	auto reducer = [](const double a, const double b) {return a + b;};
 	REDUCE<CellData<2>> reduce(reducer, cell_data);
@@ -141,7 +141,7 @@ TEST(test_REDUCE, mat_data) {
 	constexpr std::size_t N = 2;
 	std::vector<double> arr(4, 0.0);
 	const MatData<N> mat_data(arr);
-	
+
 	auto reducer = [](const double a, const double b) {return a + b;};
 	REDUCE<MatData<N>> reduce(reducer, mat_data);
 
@@ -164,7 +164,7 @@ TEST(test_NEIGH, has_neigh) {
 
         MultidimArray<2, double> arr({2, 2});
 	const CellData<2> cell_data(arr);
-		
+
 	NEIGH<CellData<2>> neigh(cell_data, stencil);
 
 	NeighProxy<CellData<2>> proxy = neigh.get(
@@ -187,7 +187,7 @@ TEST(test_NEIGH, get_neigh) {
 	arr[Coords<2>(0u, 0u)] = value1;
 	arr[Coords<2>(0u, 1u)] = value2;
 	const CellData<2> cell_data(arr);
-		
+
 	NEIGH<CellData<2>> neigh(cell_data, stencil);
 
 	NeighProxy<CellData<2>> proxy = neigh.get(

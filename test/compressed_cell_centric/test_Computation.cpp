@@ -72,7 +72,7 @@ protected:
 				= density.mixed_storage_value_at(mixed_index);
 			const double volume_value
 				= volume.mixed_storage_value_at(mixed_index);
-			
+
 			ASSERT_EQ(mass_value, density_value * volume_value);
 		}
 	}
@@ -142,7 +142,7 @@ TEST_F(CompressedComputation, in_out) {
 
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
-	
+
         computation.compute(kernel,
 			    IN<CellMatData<2>>(density),
 			    IN<CellMatData<2>>(volume),
@@ -163,13 +163,13 @@ TEST_F(CompressedComputation, in_reduce) {
 	auto sum = [] (double left, double right) {
 			   return left + right;
 		   };
-	
+
 	auto kernel = [] (double density,
 			  double volume,
 			  ReduceProxy<double> mass_by_cell) {
 			      mass_by_cell << density * volume;
 		      };
-	
+
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
 	computation.compute(kernel,
@@ -202,10 +202,10 @@ TEST_F(CompressedComputation, neigh) {
 		        x[index] = 1;
 		}
 	}
-	
+
 	IndexGenerator<2> index_generator({1, 1}, {3, 3});
 	Computation<2> computation(data, index_generator);
-	
+
 	computation.compute([] (NeighProxy<CellData<2>> x,
 				double& y) {
 				    y =   x[{1,1}]  + x[{1,0}]  + x[{1,-1}]
@@ -261,7 +261,7 @@ TEST_F(CompressedComputation, free_scalar) {
 
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
-	
+
         computation.compute(kernel,
 			    IN<CellMatData<2>>(density),
 			    FREE_SCALAR<>(factor),

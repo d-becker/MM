@@ -184,8 +184,8 @@ def mm_gen_mpi_compact(master, date, kernels):
       code(line[:-2]+');')
       ELSE()
       code('const Cell& cell = structure.structure[i+j*shape[0]];')
-      FOR('std::size_t structure_index = cell.imat; \n\
-            structure_index < cell.imat + cell.nmats; structure_index++')
+      FOR('std::size_t structure_index = cell.imat;\n\
+             structure_index < cell.imat + cell.nmats; structure_index++')
       code('std::size_t mat_index = structure.mixed_storage[structure_index].material;')
       #
       # Function call
@@ -206,14 +206,14 @@ def mm_gen_mpi_compact(master, date, kernels):
             var = 'arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index))'
           line = line + config.depth*' ' + '  ' + var + ',\n'
       code(line[:-2]+');')
-      ENDFOR()      
+      ENDFOR()
       ENDIF()
     elif 'Mat' in space:
       FOR('std::size_t mat_index = 0; mat_index < computation.data.get_mat_number(); mat_index++')
     else:
       code('std::size_t mat_index = 0;')
 
-    
+
 
     if 'Cell' in space:
       for d2 in range(0,dim):

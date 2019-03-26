@@ -4,3 +4,4 @@
 .directory
 *.o
 *.pyc
+*.optrpt

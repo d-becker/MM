@@ -303,8 +303,8 @@ def main(source_files):
   #
   # loop over all input source files
   #
-  
-  # Find the macros defiend in the source files 
+
+  # Find the macros defiend in the source files
   for a in range(0, len(source_files)):
         src_file = str(source_files[a])
         f = open(src_file, 'r')
