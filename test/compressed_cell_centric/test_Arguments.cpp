@@ -13,7 +13,7 @@ namespace MM::compressed_cell_centric {
 namespace {
 
 Data<2, double> dummy_data() {
-	return Data<2, double>({2, 2}, {});
+  return Data<2, double>({2, 2}, {{}, {}, {}, {}});
 }
 
 TEST(test_IN, cell_data) {

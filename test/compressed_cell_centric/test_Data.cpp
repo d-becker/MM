@@ -12,8 +12,9 @@ namespace MM::compressed_cell_centric {
 namespace {
 
 TEST(CompressedData, size_correct) {
+  constexpr std::size_t cell_no = 4 * 8;
 	const std::vector<std::vector<std::size_t>> arr
-		= get_raw_data(10, 4);
+		= get_raw_data(cell_no, 4);
 	const std::array<std::size_t, 2> size = {4, 8};
 
 	Data<2> data(size, arr);

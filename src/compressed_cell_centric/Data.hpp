@@ -3,6 +3,8 @@
 
 #include <array>
 #include <cstddef>
+#include <functional>
+#include <numeric>
 #include <unordered_set>
 #include <vector>
 
@@ -27,7 +29,12 @@ public:
 		  cell_values(),
 		  mixed_storage_values()
 	{
-
+    const std::size_t total_cell_number = std::accumulate(
+        size.begin(),
+        size.end(),
+        1,
+        std::multiplies<std::size_t>());
+    assert(total_cell_number == materials.size());
 	}
 
 	const std::array<std::size_t, N>& get_size() const {
