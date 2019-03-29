@@ -183,10 +183,18 @@ def mm_gen_mpi_compact(master, date, kernels):
           line = line + config.depth*' ' + '  ' + var + ',\n'
       code(line[:-2]+');')
       ELSE()
+
+      # Using a linked list in the compressed cell centric mixed storage if MM_LINKED is defined.
+      code('#ifdef MM_LINKED')
+      FOR('std::size_t structure_index = structure.structure[i+j*shape[0]].imat;\n\
+            structure_index!=-1ul; structure_index = structure.mixed_storage[structure_index].nextfrac')
+      code('#else')
       code('const Cell& cell = structure.structure[i+j*shape[0]];')
       FOR('std::size_t structure_index = cell.imat;\n\
              structure_index < cell.imat + cell.nmats; structure_index++')
+      code('#endif')
       code('std::size_t mat_index = structure.mixed_storage[structure_index].material;')
+
       #
       # Function call
       #

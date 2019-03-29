@@ -20,6 +20,12 @@ struct Cell {
 };
 
 struct MixedStorageCell {
+#ifdef MM_LINKED
+	// The index of the next material in the same cell
+	// or -1 if this is the last one.
+	std::size_t nextfrac;
+#endif
+
 	// The index of the cell this material belongs to.
 	std::size_t frac2cell;
 
@@ -106,19 +112,38 @@ public:
 		}
 
 		CellIterator& operator++() {
+#ifdef MM_LINKED
 			const Cell& cell = structure.cell_at(cell_index);
 
 			if (cell.nmats > 1) {
+				const MixedStorageCell& mixed_cell
+					= structure.mixed_cell_at(
+						mixed_storage_index);
+				const std::size_t next = mixed_cell.nextfrac;
+
+				if (next != -1u) {
+					mixed_storage_index = next;
+					return *this;
+				}
+			}
+
+			mixed_storage_index = -1;
+			return *this;
+#else
+      const Cell& cell = structure.cell_at(cell_index);
+
+      if (cell.nmats > 1) {
         mixed_storage_index++;
 
         const std::size_t end_index = cell.imat + cell.nmats;
         if (mixed_storage_index < end_index) {
           return *this;
         }
-			}
+      }
 
-			mixed_storage_index = -1;
-			return *this;
+      mixed_storage_index = -1;
+      return *this;
+#endif
 		}
 
 		bool operator==(const CellIterator& other) const {
@@ -175,12 +200,12 @@ public:
 
 	const Cell& cell_at(const std::size_t index) const {
     assert(index < structure.size());
-		return structure[index];
+    return structure[index];
 	}
 
 	const MixedStorageCell& mixed_cell_at(const std::size_t index) const {
     assert(index < mixed_storage.size());
-		return mixed_storage[index];
+    return mixed_storage[index];
 	}
 
 	std::size_t cell_number() const {
@@ -210,10 +235,17 @@ public:
 	{
 		for (const std::size_t material : materials_in_cell) {
 			MixedStorageCell ms;
+#ifdef MM_LINKED
+			ms.nextfrac = mixed_storage.size() + 1;
+#endif
 			ms.frac2cell = cell_index;
 			ms.material = material;
 			mixed_storage.emplace_back(ms);
 		}
+
+#ifdef MM_LINKED
+		mixed_storage.back().nextfrac = -1;
+#endif
 	}
 
 	std::vector<Cell> structure;
