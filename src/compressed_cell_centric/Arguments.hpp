@@ -12,6 +12,7 @@
 #include "compressed_cell_centric/CompressedDataStructure.hpp"
 #include "compressed_cell_centric/Datasets.hpp"
 #include "compressed_cell_centric/Data.hpp"
+#include "mm_assert.hpp"
 
 namespace MM {
 
@@ -206,7 +207,7 @@ public:
   }
 
   const dtype& get_neigh(const Offsets<T::N>& offset) const {
-    assert(has_neigh(offset));
+    MM_ASSERT(has_neigh(offset));
 
     const Coords<T::N> neighbour_coords = cell_coords + offset;
 
@@ -262,7 +263,7 @@ public:
   }
 
   const dtype& get_with_token(const Token& token) const {
-    assert(token.is_valid());
+    MM_ASSERT(token.is_valid());
 
     // CellMatIndex is not used.
     return unified_data_get(dataset, CellMatIndex(-1, -1), token.value_index);
@@ -294,7 +295,7 @@ private:
       }
     }
 
-    assert(false);
+    MM_ASSERT(false);
   }
 
   bool has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {

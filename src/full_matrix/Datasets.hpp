@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Coords.hpp"
+#include "mm_assert.hpp"
 #include "MultidimArray.hpp"
 
 namespace MM {
@@ -79,12 +80,12 @@ public:
   }
 
   const dtype& operator[](const std::size_t index) const {
-    assert(index < material_data.size());
+    MM_ASSERT(index < material_data.size());
     return material_data[index];
   }
 
   dtype& operator[](const std::size_t index) {
-    assert(index < material_data.size());
+    MM_ASSERT(index < material_data.size());
     return material_data[index];
   }
 

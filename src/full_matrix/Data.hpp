@@ -10,6 +10,7 @@
 
 #include "Coords.hpp"
 #include "DimensionError.hpp"
+#include "mm_assert.hpp"
 
 #include "full_matrix/Datasets.hpp"
 
@@ -26,11 +27,11 @@ public:
       mat_number(p_mat_number)
   {
     // The number of materials cannot be zero.
-    assert(p_mat_number != 0);
+    MM_ASSERT(p_mat_number != 0);
 
     // The size cannot contain ones.
     for (const std::size_t d : p_size) {
-      assert(d != 1);
+      MM_ASSERT(d != 1);
     }
 
     assert_no_zero_size(p_size);
@@ -83,7 +84,7 @@ private:
   static void assert_no_zero_size(const std::array<std::size_t, N> size) {
     for (const std::size_t d : size) {
       // The size cannot contain zeros.
-      assert(d != 1);
+      MM_ASSERT(d != 1);
     }
   }
 

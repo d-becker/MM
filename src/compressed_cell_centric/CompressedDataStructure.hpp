@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+#include "mm_assert.hpp"
+
 namespace MM {
 
 namespace compressed_cell_centric {
@@ -199,12 +201,12 @@ public:
 	}
 
 	const Cell& cell_at(const std::size_t index) const {
-    assert(index < structure.size());
+    MM_ASSERT(index < structure.size());
     return structure[index];
 	}
 
 	const MixedStorageCell& mixed_cell_at(const std::size_t index) const {
-    assert(index < mixed_storage.size());
+    MM_ASSERT(index < mixed_storage.size());
     return mixed_storage[index];
 	}
 

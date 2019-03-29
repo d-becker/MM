@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Coords.hpp"
+#include "mm_assert.hpp"
 
 namespace MM {
 
@@ -42,7 +43,7 @@ public:
   }
 
   const dtype& operator[](const Coords<N>& coords) const {
-    assert(bounds_check(coords));
+    MM_ASSERT(bounds_check(coords));
     const std::size_t index = multidim_index_to_raw(coords, size);
     return buffer[index];
   }
@@ -55,12 +56,12 @@ public:
   }
 
   const dtype& at_raw_index(std::size_t index) const {
-    assert(index < buffer.size());
+    MM_ASSERT(index < buffer.size());
     return buffer[index];
   }
 
   dtype& at_raw_index(std::size_t index) {
-    assert(index < buffer.size());
+    MM_ASSERT(index < buffer.size());
     return buffer[index];
   }
 

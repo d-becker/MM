@@ -9,6 +9,8 @@
 #include <unordered_set>
 
 #include "Coords.hpp"
+#include "mm_assert.hpp"
+
 #include "full_matrix/Datasets.hpp"
 
 namespace MM {
@@ -187,7 +189,7 @@ public:
   }
 
   const dtype& get_neigh(const Offsets<T::N>& offset) const {
-    assert(stencil.contains_offset(offset));
+    MM_ASSERT(stencil.contains_offset(offset));
 
     const Coords<T::N> neighbour_coords = cell_coords + offset;
     return unified_data_get(data, neighbour_coords, mat_index);
@@ -229,7 +231,7 @@ public:
   }
 
   const dtype get_with_token(const Token& token) const {
-    assert(token.is_valid());
+    MM_ASSERT(token.is_valid());
 
     return unified_data_get(data, token.coords, mat_index);
   }
@@ -273,7 +275,7 @@ class NeighProxyDirect {
   }
 
   const dtype get_with_token(const Token& token) const {
-    assert(token.is_valid());
+    MM_ASSERT(token.is_valid());
 
 
     return ptr[token.offsets[0] + token.offsets[1]*shape[0]];

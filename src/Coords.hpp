@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
+#include "mm_assert.hpp"
 
 namespace MM {
 
@@ -28,13 +29,12 @@ public:
 	}
 
 	dtype operator[](const std::size_t n) const {
-    // assert(n < N);
-    return coordinates.at(n);
+    MM_ASSERT(n < N);
 		return coordinates[n];
 	}
 
   dtype& operator[](const std::size_t n) {
-    assert(n < N);
+    MM_ASSERT(n < N);
 		return coordinates[n];
 	}
 

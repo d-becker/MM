@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "mm_assert.hpp"
 #include "MultidimArray.hpp"
 #include "compressed_cell_centric/CompressedDataStructure.hpp"
 #include "compressed_cell_centric/Datasets.hpp"
@@ -34,7 +35,7 @@ public:
         size.end(),
         1,
         std::multiplies<std::size_t>());
-    assert(total_cell_number == materials.size());
+    MM_ASSERT(total_cell_number == materials.size());
 	}
 
 	const std::array<std::size_t, N>& get_size() const {
