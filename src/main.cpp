@@ -256,8 +256,7 @@ void test4_index() {
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});
 	Computation<2> computation(data, index_generator);
 
-	computation.compute([] (Coords<2> index,
-				double& y) {
+  computation.compute([] (Coords<2> index, double& /* y */) {
       std::cout << index[0] << ", " << index[1] << std::endl;
 			    },
 			    INDEX<2>(),

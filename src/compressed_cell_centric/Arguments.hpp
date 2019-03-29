@@ -21,20 +21,20 @@ namespace compressed_cell_centric {
 template<std::size_t N, typename dtype>
 dtype& unified_data_get(CellData<N, dtype> data,
                         const CellMatIndex& cell_mat_index,
-                        const ValueIndex& _value_index) {
+                        const ValueIndex& /* value_index */) {
   return data.at_raw_index(cell_mat_index.cell_index);
 }
 
 template<std::size_t N, typename dtype>
 dtype& unified_data_get(MatData<N, dtype> data,
                         const CellMatIndex& cell_mat_index,
-                        const ValueIndex& _value_index) {
+                        const ValueIndex& /* _value_index */) {
   return data[cell_mat_index.mat_index];
 }
 
 template<std::size_t N, typename dtype>
 dtype& unified_data_get(CellMatData<N, dtype> data,
-                        const CellMatIndex& cell_mat_index,
+                        const CellMatIndex& /* cell_mat_index */,
                         const ValueIndex& value_index) {
   if (value_index.type == ValueIndex::Type::MULTIMAT) {
     return data.mixed_storage_value_at(value_index.index);
@@ -419,8 +419,8 @@ public:
   template<std::size_t N>
   const dtype& get(const Coords<N>&,
                    const Data<N, dtype>&,
-                   const CellMatIndex& cell_mat_index,
-                   const ValueIndex& value_index) const {
+                   const CellMatIndex& /* cell_mat_index */,
+                   const ValueIndex& /* value_index */) const {
     return value;
   }
 
@@ -441,8 +441,8 @@ public:
   template<std::size_t N>
   const array_type& get(const Coords<N>&,
                         const Data<N, dtype>&,
-                        const CellMatIndex& cell_mat_index,
-                        const ValueIndex& value_index) const {
+                        const CellMatIndex& /* cell_mat_index */,
+                        const ValueIndex& /* value_index */) const {
     return values;
   }
 
