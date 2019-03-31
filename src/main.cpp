@@ -31,18 +31,6 @@ void print_array(const std::array<std::size_t, N> arr) {
 	cout << endl;
 }
 
-void index_generator() {
-	std::array<std::size_t, 3> begin {0, 1, 0};
-	std::array<std::size_t, 3> end {2, 4, 2};
-
-	IndexGenerator<3> generator(begin, end);
-
-	while (generator.has_next()) {
-		std::array<std::size_t, 3> array = generator.next();
-		print_array(array);
-	}
-}
-
 void datasets() {
 	Data<2> data({2, 2}, 4);
 	CellData<2> dataset = data.new_cell_data();

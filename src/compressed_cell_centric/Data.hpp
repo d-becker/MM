@@ -46,6 +46,10 @@ public:
 		return mat_number;
 	}
 
+  const CompressedDataStructure get_structure() const {
+    return structure;
+  }
+
 	CellData<N, dtype> new_cell_data() {
 		cell_only_buffers.emplace_back(size);
 		return CellData<N, dtype>(cell_only_buffers.back());
@@ -68,7 +72,7 @@ public:
 	CompressedDataStructure::CellIteration
 	cell_iteration(const Coords<N>& coords) const {
 		const std::size_t flat_index
-			= multidim_index_to_raw(coords, size);
+			= coords_to_flat_index(coords, size);
 		return structure.cell_iteration(flat_index);
 	}
 

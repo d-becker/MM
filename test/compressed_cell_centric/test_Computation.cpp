@@ -229,7 +229,7 @@ TEST_F(CompressedComputation, index) {
 
 	auto kernel = [] (const Coords<2> coords,
 			  double& value) {
-		value = multidim_index_to_raw(coords, {2, 2});
+		value = coords_to_flat_index(coords, {2, 2});
 	};
 
 	IndexGenerator<2> index_generator({0, 0}, {2, 2});

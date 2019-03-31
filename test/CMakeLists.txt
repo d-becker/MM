@@ -1,4 +1,5 @@
 SET(SRC_FILES
+        test_Coords.cpp
         compressed_cell_centric/test_Arguments.cpp
         compressed_cell_centric/test_Computation.cpp
         compressed_cell_centric/test_CompressedDataStructure.cpp

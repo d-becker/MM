@@ -4,6 +4,8 @@
 #include <array>
 #include <cstddef>
 
+#include "Coords.hpp"
+
 namespace MM {
 
 template<std::size_t N>
@@ -32,11 +34,22 @@ public:
     return end;
   }
 
+  bool is_in_range(const Coords<N>& index) const {
+    for (std::size_t i = 0; i < N; ++i) {
+      const bool inside = begin[i] <= index[i] && index[i] < end[i];
+      if (!inside) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   bool has_next() const {
     return _has_next;
   }
 
-  std::array<std::size_t, N> next() {
+  Coords<N> next() {
     std::array<std::size_t, N> res = current;
 
     for (std::size_t i = 0; i < N; ++i) {
@@ -54,7 +67,7 @@ public:
       }
     }
 
-    return res;
+    return Coords<N>::from_array(res);
   }
 
 private:

@@ -272,7 +272,7 @@ public:
 private:
   const dtype&
   get_neigh_cell_data(const Coords<T::N>& neighbour_coords) const {
-    const std::size_t flat_index = multidim_index_to_raw(
+    const std::size_t flat_index = coords_to_flat_index(
       neighbour_coords,
       data.get_size());
     const CellMatIndex n_cell_mat_index(flat_index, -1);

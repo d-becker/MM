@@ -23,8 +23,7 @@ public:
 		// TODO: check all args belong to this->data.
 
 		while (index_generator.has_next()) {
-			const Coords<N> coords
-				= Coords<N>::from_array(index_generator.next());
+			const Coords<N> coords = index_generator.next();
 			for (std::size_t mat_index = 0;
 			     mat_index < data.get_mat_number();
 			     ++mat_index) {

@@ -11,20 +11,6 @@
 
 namespace MM {
 
-template <std::size_t N>
-std::size_t multidim_index_to_raw(const Coords<N>& coords,
-                                  const std::array<std::size_t, N> size) {
-  std::size_t multiplier = 1;
-  std::size_t index = 0;
-
-  for (std::size_t i = 0; i < N; ++i) {
-    index += coords[i] * multiplier;
-    multiplier *= size[i];
-  }
-
-  return index;
-}
-
 template <std::size_t N, typename dtype>
 class MultidimArray {
 public:
@@ -44,7 +30,7 @@ public:
 
   const dtype& operator[](const Coords<N>& coords) const {
     MM_ASSERT(bounds_check(coords));
-    const std::size_t index = multidim_index_to_raw(coords, size);
+    const std::size_t index = coords_to_flat_index(coords, size);
     return buffer[index];
   }
 

@@ -68,6 +68,40 @@ Coords<N> operator+(const Coords<N>& coords, const Offsets<N>& offsets) {
 	return Coords<N>::from_array(c);
 }
 
+template <std::size_t N>
+std::size_t coords_to_flat_index(const Coords<N>& coords,
+                                 const std::array<std::size_t, N>& size) {
+  std::size_t multiplier = 1;
+  std::size_t index = 0;
+
+  for (std::size_t i = 0; i < N; ++i) {
+    index += coords[i] * multiplier;
+    multiplier *= size[i];
+  }
+
+  return index;
+}
+
+template <std::size_t N>
+Coords<N> flat_index_to_coords(const std::size_t index,
+                               const std::array<std::size_t, N>& size) {
+  std::array<std::size_t, N> partial_products;
+  partial_products[0] = 1;
+  for (std::size_t i = 0; i < N - 1; i++) {
+    partial_products[i + 1] = partial_products[i] * size[i];
+  }
+
+  std::size_t remaining_index = index;
+  std::array<std::size_t, N> res;
+  for (std::size_t i = N - 1; (i + 1) > 0; i--) {
+    res[i] = remaining_index / partial_products[i];
+    remaining_index = remaining_index % partial_products[i];
+  }
+
+
+  return Coords<N>::from_array(res);
+}
+
 } // namespace MM
 
 #endif // MM_COORDS_HPP
