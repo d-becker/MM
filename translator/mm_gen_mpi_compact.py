@@ -136,7 +136,7 @@ def mm_gen_mpi_compact(master, date, kernels):
     code('const std::array<std::size_t, '+str(dim)+'> &begin = computation.index_generator.get_begin();')
     code('const std::array<std::size_t, '+str(dim)+'> &end = computation.index_generator.get_end();')
     code('')
-    code('CompressedDataStructure &structure = computation.data.structure;')
+    code('const CompressedDataStructure &structure = computation.data.structure;')
     code('std::array<std::size_t,'+str(dims[n])+'> shape = computation.data.get_size();')
 
     for n in range(0,nargs):

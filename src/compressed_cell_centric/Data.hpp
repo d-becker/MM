@@ -93,7 +93,7 @@ public:
 
 	const std::size_t mat_number;
 	const std::array<std::size_t, N> size;
-	CompressedDataStructure structure;
+	const CompressedDataStructure structure;
 
 	std::list<MultidimArray<N, dtype>> cell_only_buffers;
   std::list<std::vector<dtype>> mat_only_buffers;
