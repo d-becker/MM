@@ -8,6 +8,8 @@
 
 #include "mm_assert.hpp"
 
+#include "Coords.hpp"
+
 namespace MM {
 
 namespace compressed_cell_centric {
@@ -19,6 +21,10 @@ struct Cell {
 	// If nmats is 1, this is the material number,
 	// otherwise an index into mixed_storage.
 	std::size_t imat;
+
+  // TODO:
+  // Only for measurements.
+  std::size_t a, b;
 };
 
 struct MixedStorageCell {
