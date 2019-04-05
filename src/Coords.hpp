@@ -75,6 +75,7 @@ std::size_t coords_to_flat_index(const Coords<N>& coords,
   std::size_t index = 0;
 
   for (std::size_t i = 0; i < N; ++i) {
+    MM_ASSERT(coords[i] < size[i]);
     index += coords[i] * multiplier;
     multiplier *= size[i];
   }
@@ -90,6 +91,8 @@ Coords<N> flat_index_to_coords(const std::size_t index,
   for (std::size_t i = 0; i < N - 1; i++) {
     partial_products[i + 1] = partial_products[i] * size[i];
   }
+
+  MM_ASSERT(index < partial_products[N - 1] * size[N - 1]);
 
   std::size_t remaining_index = index;
   std::array<std::size_t, N> res;

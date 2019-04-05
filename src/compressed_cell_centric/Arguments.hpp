@@ -58,8 +58,7 @@ public:
   }
 
   template<std::size_t N>
-  const dtype& get(const Coords<N>&,
-                   const Data<N, dtype>&,
+  const dtype& get(const Data<N, dtype>&,
                    const CellMatIndex& cell_mat_index,
                    const ValueIndex& value_index) const {
     return unified_data_get(data, cell_mat_index, value_index);
@@ -93,8 +92,7 @@ public:
   }
 
   template <std::size_t N>
-  typename T::dtype& get(const Coords<N>&,
-                         const Data<N, dtype>&,
+  typename T::dtype& get(const Data<N, dtype>&,
                          const CellMatIndex& cell_mat_index,
                          const ValueIndex& value_index) {
     return unified_data_get(data, cell_mat_index, value_index);
@@ -148,8 +146,7 @@ public:
   }
 
   template<std::size_t N>
-  ReduceProxy<typename T::dtype> get(const Coords<N>&,
-                                     const Data<N, dtype>&,
+  ReduceProxy<typename T::dtype> get(const Data<N, dtype>&,
                                      const CellMatIndex& cell_mat_index,
                                      const ValueIndex& value_index) {
     dtype& value = unified_data_get(data, cell_mat_index, value_index);
@@ -366,10 +363,13 @@ public:
   }
 
   NeighProxy<T>
-  get(const Coords<T::N>& coords,
-      const Data<T::N, dtype>& data,
+  get(const Data<T::N, dtype>& data,
       const CellMatIndex& cell_mat_index,
       const ValueIndex& value_index) {
+    // TODO: Instead of Coords objects, use the linear index and add row/column
+    // offsets to it.
+    const Coords<T::N> coords = flat_index_to_coords(cell_mat_index.cell_index,
+                                                     data.get_size());
     return NeighProxy<T>(
         data,
         coords,
@@ -400,11 +400,10 @@ public:
 
   template<typename dtype>
   Coords<N>
-  get(const Coords<N>& cell_index,
-      const Data<N, dtype>&,
-      const CellMatIndex&,
+  get(const Data<N, dtype>& data,
+      const CellMatIndex& cell_mat_index,
       const ValueIndex&) {
-    return cell_index;
+    return flat_index_to_coords(cell_mat_index.cell_index, data.get_size());
   }
 };
 
@@ -417,8 +416,7 @@ public:
   }
 
   template<std::size_t N>
-  const dtype& get(const Coords<N>&,
-                   const Data<N, dtype>&,
+  const dtype& get(const Data<N, dtype>&,
                    const CellMatIndex& /* cell_mat_index */,
                    const ValueIndex& /* value_index */) const {
     return value;
@@ -439,8 +437,7 @@ public:
   }
 
   template<std::size_t N>
-  const array_type& get(const Coords<N>&,
-                        const Data<N, dtype>&,
+  const array_type& get(const Data<N, dtype>&,
                         const CellMatIndex& /* cell_mat_index */,
                         const ValueIndex& /* value_index */) const {
     return values;

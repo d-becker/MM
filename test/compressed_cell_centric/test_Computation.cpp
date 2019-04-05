@@ -151,6 +151,58 @@ TEST_F(CompressedComputation, in_out) {
 	check_mass(mass, density, volume);
 }
 
+TEST_F(CompressedComputation, in_out_no_fuse) {
+	CellMatData<2> density = data.new_cell_mat_data();
+	CellMatData<2> volume = data.new_cell_mat_data();
+
+	fill_density(density);
+	fill_volume(volume);
+
+	CellMatData<2> mass = data.new_cell_mat_data();
+
+	auto kernel = [] (double density,
+			  double volume,
+			  double& mass) {
+		mass = density * volume;
+	};
+
+	IndexGenerator<2> index_generator({0, 0}, {2, 2});
+	Computation<2> computation(data, index_generator);
+
+        computation.compute_no_fuse(kernel,
+			    IN<CellMatData<2>>(density),
+			    IN<CellMatData<2>>(volume),
+			    OUT<CellMatData<2>>(mass));
+
+	check_mass(mass, density, volume);
+}
+
+TEST_F(CompressedComputation, in_out_fuse) {
+	CellMatData<2> density = data.new_cell_mat_data();
+	CellMatData<2> volume = data.new_cell_mat_data();
+
+	fill_density(density);
+	fill_volume(volume);
+
+	CellMatData<2> mass = data.new_cell_mat_data();
+
+	auto kernel = [] (double density,
+			  double volume,
+			  double& mass) {
+		mass = density * volume;
+	};
+
+	IndexGenerator<2> index_generator({0, 0}, {2, 2});
+	Computation<2> computation(data, index_generator);
+
+        computation.compute_fuse(kernel,
+			    IN<CellMatData<2>>(density),
+			    IN<CellMatData<2>>(volume),
+			    OUT<CellMatData<2>>(mass));
+
+	check_mass(mass, density, volume);
+}
+
 TEST_F(CompressedComputation, in_reduce) {
 	CellMatData<2> density = data.new_cell_mat_data();
 	CellMatData<2> volume = data.new_cell_mat_data();
@@ -221,7 +273,6 @@ TEST_F(CompressedComputation, neigh) {
 			ASSERT_EQ(y[index], 9);
 		}
 	}
-	// FAIL() << "Unimplemented.";
 }
 
 TEST_F(CompressedComputation, index) {
