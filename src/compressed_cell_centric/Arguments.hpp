@@ -156,10 +156,10 @@ public:
     return ReduceProxy<dtype>(value, reducer);
   }
 
-private:
   // A commutative and associative function.
   std::function<dtype(dtype, dtype)> reducer;
   T data;
+private:
 };
 
 template <std::size_t N>
