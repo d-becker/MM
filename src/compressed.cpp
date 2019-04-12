@@ -20,7 +20,7 @@ void compact_alg_1(int sizex, int sizey,
     const double *__restrict__ Vf,
     const double *__restrict__ Vf_compact_list,
           double *__restrict__ rho_ave_compact,
-          CompressedDataStructure &structure);
+          const CompressedDataStructure &structure);
 
 void compact_alg_2(int sizex, int sizey,
     double *__restrict__ p_compact, double *__restrict__ p_compact_list,
@@ -30,13 +30,13 @@ void compact_alg_2(int sizex, int sizey,
     const double *__restrict__ t_compact_list,
     const double *__restrict__ Vf,
     const double *__restrict__ Vf_compact_list,
-          CompressedDataStructure &structure);
+          const CompressedDataStructure &structure);
 void compact_alg_3(int sizex, int sizey,
     double *__restrict__ rho_mat_ave_compact, double *__restrict__ rho_mat_ave_compact_list,
-    const double *__restrict__ x, 
-    const double *__restrict__ y, 
+    const double *__restrict__ x,
+    const double *__restrict__ y,
     const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
-          CompressedDataStructure &structure);
+          const CompressedDataStructure &structure);
 extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, MM::full_matrix::Data<2> &d,
 	MM::full_matrix::CellMatData<2>& f_rho, MM::full_matrix::CellMatData<2>& f_rho_mat_ave,
   MM::full_matrix::CellMatData<2>& f_p, MM::full_matrix::CellMatData<2>& f_Vf, MM::full_matrix::CellMatData<2>& f_t,

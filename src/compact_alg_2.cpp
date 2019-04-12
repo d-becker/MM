@@ -11,13 +11,13 @@ using namespace MM::compressed_cell_centric;
 
 void compact_alg_2(int sizex, int sizey,
     double *__restrict__ p_compact, double *__restrict__ p_compact_list,
-    const double *__restrict__ n, 
+    const double *__restrict__ n,
     const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
-    const double *__restrict__ t_compact, 
-    const double *__restrict__ t_compact_list, 
-    const double *__restrict__ Vf, 
-    const double *__restrict__ Vf_compact_list, 
-          CompressedDataStructure &structure) {
+    const double *__restrict__ t_compact,
+    const double *__restrict__ t_compact_list,
+    const double *__restrict__ Vf,
+    const double *__restrict__ Vf_compact_list,
+          const CompressedDataStructure &structure) {
 
   double t1 = omp_get_wtime();
 

@@ -296,6 +296,7 @@ private:
     }
 
     MM_ASSERT(false);
+    std::exit(1);
   }
 
   bool has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
