@@ -11,11 +11,11 @@ using namespace MM::compressed_cell_centric;
 
 void compact_alg_1(int sizex, int sizey,
     const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
-    const double *__restrict__ V, 
-    const double *__restrict__ Vf, 
-    const double *__restrict__ Vf_compact_list, 
-          double *__restrict__ rho_ave_compact, 
-          CompressedDataStructure &structure) {
+    const double *__restrict__ V,
+    const double *__restrict__ Vf,
+    const double *__restrict__ Vf_compact_list,
+          double *__restrict__ rho_ave_compact,
+          const CompressedDataStructure &structure) {
 // Computational loop 1 - average density in cell
   double t1 = omp_get_wtime();
   #if defined(OMP)

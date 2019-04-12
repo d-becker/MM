@@ -11,10 +11,10 @@ using namespace MM::compressed_cell_centric;
 
 void compact_alg_3(int sizex, int sizey,
     double *__restrict__ rho_mat_ave_compact, double *__restrict__ rho_mat_ave_compact_list,
-    const double *__restrict__ x, 
-    const double *__restrict__ y, 
+    const double *__restrict__ x,
+    const double *__restrict__ y,
     const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
-          CompressedDataStructure &structure) {
+          const CompressedDataStructure &structure) {
 
   double t1 = omp_get_wtime();
 	// Computational loop 3 - Average density of each material over neighborhood of each cell
