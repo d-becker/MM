@@ -12,7 +12,31 @@
 using namespace std;
 using namespace MM;
 using namespace MM::compressed_cell_centric;
+i
 
+void compact_alg_1(int sizex, int sizey,
+    const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
+    const double *__restrict__ V,
+    const double *__restrict__ Vf,
+    const double *__restrict__ Vf_compact_list,
+          double *__restrict__ rho_ave_compact,
+          CompressedDataStructure &structure);
+
+void compact_alg_2(int sizex, int sizey,
+    double *__restrict__ p_compact, double *__restrict__ p_compact_list,
+    const double *__restrict__ n,
+    const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
+    const double *__restrict__ t_compact,
+    const double *__restrict__ t_compact_list,
+    const double *__restrict__ Vf,
+    const double *__restrict__ Vf_compact_list,
+          CompressedDataStructure &structure);
+void compact_alg_3(int sizex, int sizey,
+    double *__restrict__ rho_mat_ave_compact, double *__restrict__ rho_mat_ave_compact_list,
+    const double *__restrict__ x, 
+    const double *__restrict__ y, 
+    const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
+          CompressedDataStructure &structure);
 extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, int Nmats, MM::full_matrix::Data<2> &d,
 	MM::full_matrix::CellMatData<2>& f_rho, MM::full_matrix::CellMatData<2>& f_rho_mat_ave,
   MM::full_matrix::CellMatData<2>& f_p, MM::full_matrix::CellMatData<2>& f_Vf, MM::full_matrix::CellMatData<2>& f_t,
@@ -79,6 +103,9 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
 
   printf("Compact matrix, cell centric, alg 1: %g sec\n", omp_get_wtime()-t1);
 
+  //C version
+  compact_alg_1(sizex, sizey, rho.get_raw(), rho.get_raw_list(), V.get_raw(), Vf.get_raw(), Vf.get_raw_list(), rho_ave.get_raw(), data.structure);
+
 	// Computational loop 2 - Pressure for each cell and each material
   t1 = omp_get_wtime();
   Computation<2> computation3(data, index_generator);
@@ -92,6 +119,8 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
       IN<CellMatData<2>>(t),
       IN<CellMatData<2>>(Vf));
   printf("Compact matrix, cell centric, alg 2: %g sec\n", omp_get_wtime()-t1);
+  //C version
+  compact_alg_2(sizex, sizey, p.get_raw(), p.get_raw_list(), n.get_raw(), rho.get_raw(), rho.get_raw_list(), t.get_raw(), t.get_raw_list(), Vf.get_raw(), Vf.get_raw_list(), data.structure);
 
 	// Computational loop 3 - Average density of each material over neighborhood of each cell
   t1 = omp_get_wtime();
@@ -141,4 +170,7 @@ extern void compact_matrix_cell_centric(unsigned int sizex, unsigned int sizey, 
     NEIGH<CellMatData<2>>(rho, s9pt),
     OUT<CellMatData<2>>(rho_mat_ave));
   printf("Compact matrix, cell centric, alg 3: %g sec\n", omp_get_wtime()-t1);
+
+  //C version
+  compact_alg_3(sizex, sizey, rho_mat_ave.get_raw(), rho_mat_ave.get_raw_list(), x.get_raw(), y.get_raw(), rho.get_raw(), rho.get_raw_list(), data.structure);
 }
