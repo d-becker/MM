@@ -112,6 +112,7 @@ def mm_gen_mpi_compact(master, date, kernels):
     j = lam.find('{',pos)
     k = para_parse(lam, j, '{', '}')
     arg_list = parse_signature(lam[pos:j])
+    print arg_list
 
     code('')
 
@@ -166,22 +167,19 @@ def mm_gen_mpi_compact(master, date, kernels):
       #
       # Function call
       #
-      line = name + '(\n'
       for arg in range(0,nargs):
-          var = ''
           if arg_type[arg] == 'arg_dat':
-              if 'CellData' == spaces[arg]:
-                var = 'data'+str(arg)+'[i+j*shape[0]]'
-              elif 'MatData' == spaces[arg]:
-                var = 'data'+str(arg)+'[mat_index]'
-              else:
-                var = 'data'+str(arg)+'[i+j*shape[0]]'
               if arg_type2[arg] == 'NEIGH':
-                var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg'+str(arg)+'.dataset)'
+                code(arg_list[arg]+'(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg'+str(arg)+'.dataset);')
+              elif 'CellData' == spaces[arg]:
+                code(arg_list[arg]+'(data'+str(arg)+'[i+j*shape[0]]);')
+              elif 'MatData' == spaces[arg]:
+                code(arg_list[arg]+'(data'+str(arg)+'[mat_index]);')
+              else:
+                code(arg_list[arg]+'(data'+str(arg)+'[i+j*shape[0]]);')
           else:
-            var = 'arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]))'
-          line = line + config.depth*' ' + '  ' + var + ',\n'
-      code(line[:-2]+');')
+            code(arg_list[arg]+'(arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0])));')
+      code(lam[j+1:k])
       ELSE()
 
       # Using a linked list in the compressed cell centric mixed storage if MM_LINKED is defined.
@@ -198,22 +196,19 @@ def mm_gen_mpi_compact(master, date, kernels):
       #
       # Function call
       #
-      line = name + '(\n'
       for arg in range(0,nargs):
-          var = ''
           if arg_type[arg] == 'arg_dat':
-              if 'CellData' == spaces[arg]:
-                var = 'data'+str(arg)+'[i+j*shape[0]]'
-              elif 'MatData' == spaces[arg]:
-                var = 'data'+str(arg)+'[mat_index]'
-              else:
-                var = 'data'+str(arg)+'_list[structure_index]'
               if arg_type2[arg] == 'NEIGH':
-                var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg'+str(arg)+'.dataset)'
+                code(arg_list[arg]+'(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg'+str(arg)+'.dataset);')
+              elif 'CellData' == spaces[arg]:
+                code(arg_list[arg]+'(data'+str(arg)+'[i+j*shape[0]]);')
+              elif 'MatData' == spaces[arg]:
+                code(arg_list[arg]+'(data'+str(arg)+'[mat_index]);')
+              else:
+                code(arg_list[arg]+'(data'+str(arg)+'_list[structure_index]);')
           else:
-            var = 'arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index))'
-          line = line + config.depth*' ' + '  ' + var + ',\n'
-      code(line[:-2]+');')
+            code(arg_list[arg]+'(arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index)));')
+      code(lam[j+1:k])
       ENDFOR()
       ENDIF()
     elif 'Mat' in space:

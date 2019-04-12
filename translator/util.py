@@ -145,17 +145,14 @@ def remove_trailing_w_space(text):
 
 
 def parse_signature(text):
-  text2 = text.replace('const','')
-  text2 = text2.replace('int','')
-  text2 = text2.replace('float','')
-  text2 = text2.replace('double','')
-  text2 = text2.replace('*','')
-  text2 = text2.replace(')','')
-  text2 = text2.replace('(','')
-  text2 = text2.replace('\n','')
-  text2 = re.sub('\[[0-9]*\]','',text2)
+  print text
   arg_list = []
-  args = text2.split(',')
+  text=text.strip()
+  if text[0] == '(':
+      text = text[1:]
+  if text[len(text)-1] == ')':
+      text = text[0:len(text)-1]
+  args = text.split(',')
   for n in range(0,len(args)):
     arg_list.append(args[n].strip())
   return arg_list
