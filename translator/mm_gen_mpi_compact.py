@@ -179,7 +179,7 @@ def mm_gen_mpi_compact(master, date, kernels):
               if arg_type2[arg] == 'NEIGH':
                 var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]), arg'+str(arg)+'.dataset)'
           else:
-            var = 'arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]))'
+            var = 'arg'+str(arg)+'.get(computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::SINGLE_MAT, i+j*shape[0]))'
           line = line + config.depth*' ' + '  ' + var + ',\n'
       code(line[:-2]+');')
       ELSE()
@@ -211,7 +211,7 @@ def mm_gen_mpi_compact(master, date, kernels):
               if arg_type2[arg] == 'NEIGH':
                 var = 'NeighProxy<'+spaces[arg]+'<'+str(dims[arg])+'>>(computation.data, '+coords+', CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index), arg'+str(arg)+'.dataset)'
           else:
-            var = 'arg'+str(arg)+'.get('+coords+', computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index))'
+            var = 'arg'+str(arg)+'.get(computation.data, CellMatIndex(i+j*shape[0], mat_index), ValueIndex(ValueIndex::Type::MULTIMAT, structure_index))'
           line = line + config.depth*' ' + '  ' + var + ',\n'
       code(line[:-2]+');')
       ENDFOR()
