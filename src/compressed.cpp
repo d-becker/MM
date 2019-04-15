@@ -12,7 +12,6 @@
 using namespace std;
 using namespace MM;
 using namespace MM::compressed_cell_centric;
-i
 
 void compact_alg_1(int sizex, int sizey,
     const double *__restrict__ rho_compact, const double *__restrict__ rho_compact_list,
