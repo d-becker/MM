@@ -192,6 +192,7 @@ public:
     : data(p_data),
       cell_coords(p_cell_coords),
       cell_mat_index(p_cell_mat_index),
+      mat_index(p_cell_mat_index.mat_index),
       value_index(p_value_index),
       dataset(p_dataset)
   {
@@ -252,7 +253,7 @@ public:
     for (const std::pair<CellMatIndex, ValueIndex> pair
            : data.cell_iteration(neighbour_coords)) {
       const CellMatIndex& n_cell_mat_index = pair.first;
-      if (n_cell_mat_index.mat_index == cell_mat_index.mat_index) {
+      if (n_cell_mat_index.mat_index == mat_index) {
         const ValueIndex& n_value_index = pair.second;
         return Token(n_value_index);
       }
@@ -287,7 +288,7 @@ private:
     for (const std::pair<CellMatIndex, ValueIndex> pair
            : data.cell_iteration(neighbour_coords)) {
       const CellMatIndex& n_cell_mat_index = pair.first;
-      if (n_cell_mat_index.mat_index == cell_mat_index.mat_index) {
+      if (n_cell_mat_index.mat_index == mat_index) {
         const ValueIndex& n_value_index = pair.second;
         return unified_data_get(dataset,
                                 n_cell_mat_index,
@@ -296,14 +297,13 @@ private:
     }
 
     MM_ASSERT(false);
-    std::exit(1);
   }
 
   bool has_neigh_cell_mat_data(const Coords<T::N>& neighbour_coords) const {
     for (const std::pair<CellMatIndex, ValueIndex> pair
            : data.cell_iteration(neighbour_coords)) {
       const CellMatIndex& n_cell_mat_index = pair.first;
-      if (n_cell_mat_index.mat_index == cell_mat_index.mat_index) {
+      if (n_cell_mat_index.mat_index == mat_index) {
         return true;
       }
     }
@@ -315,6 +315,7 @@ private:
   const Coords<T::N> cell_coords;
   const CellMatIndex& cell_mat_index;
   const ValueIndex& value_index;
+  const std::size_t mat_index;
 
   T dataset;
 };
