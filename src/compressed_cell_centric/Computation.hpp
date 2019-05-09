@@ -25,7 +25,7 @@ public:
 	template<typename FUNC, typename ...ARGS>
 	void compute(FUNC func, ARGS ...args) {
 		// TODO: check all args belong to this->data.
-#ifdef MM_FUSED
+#ifdef MM_NO_FUSED
   const CompressedDataStructure structure = data.get_structure();
   const std::array<std::size_t, N>& size = data.get_size();
 
